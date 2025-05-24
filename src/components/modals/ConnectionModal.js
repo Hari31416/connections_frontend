@@ -2,11 +2,32 @@ import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
 const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
-  const { darkMode, addConnection, updateConnection, positions } = useApp();
+  const {
+    darkMode,
+    addConnection,
+    updateConnection,
+    positions,
+    companies,
+    addPosition,
+    updatePosition,
+    deletePosition,
+  } = useApp();
   const [newConn, setNewConn] = useState({
     name: "",
     email: "",
     phone: "",
+    notes: "",
+  });
+
+  // State for position management within the modal
+  const [showPositionForm, setShowPositionForm] = useState(false);
+  const [editingPosition, setEditingPosition] = useState(null);
+  const [positionFormData, setPositionFormData] = useState({
+    companyId: "",
+    title: "",
+    startDate: "",
+    endDate: "",
+    current: false,
     notes: "",
   });
 
@@ -29,7 +50,23 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
         notes: "",
       });
     }
+
+    // Reset position form state
+    setShowPositionForm(false);
+    setEditingPosition(null);
+    resetPositionForm();
   }, [editConnection, showModal]);
+
+  const resetPositionForm = () => {
+    setPositionFormData({
+      companyId: "",
+      title: "",
+      startDate: "",
+      endDate: "",
+      current: false,
+      notes: "",
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,6 +90,89 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
     return positions.filter(
       (position) => position.connectionId._id === editConnection._id
     );
+  };
+
+  // Handle showing the position form
+  const handleAddPosition = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setEditingPosition(null);
+    resetPositionForm();
+    setShowPositionForm(true);
+  };
+
+  // Handle editing a position
+  const handleEditPosition = (position, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setEditingPosition(position);
+    setPositionFormData({
+      id: position._id,
+      companyId: position.companyId._id,
+      title: position.title || "",
+      startDate: position.startDate
+        ? new Date(position.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: position.endDate
+        ? new Date(position.endDate).toISOString().split("T")[0]
+        : "",
+      current: position.current || false,
+      notes: position.notes || "",
+    });
+    setShowPositionForm(true);
+  };
+
+  // Handle deleting a position
+  const handleDeletePosition = async (positionId, title, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (
+      window.confirm(`Are you sure you want to delete this position: ${title}?`)
+    ) {
+      const success = await deletePosition(positionId);
+      if (!success) {
+        alert("Failed to delete position");
+      }
+    }
+  };
+
+  // Handle submitting the position form
+  const handlePositionSubmit = async (e) => {
+    e.preventDefault();
+    let success;
+
+    const positionData = {
+      ...positionFormData,
+      connectionId: editConnection._id,
+    };
+
+    if (editingPosition) {
+      positionData.id = editingPosition._id;
+      success = await updatePosition(positionData);
+    } else {
+      success = await addPosition(positionData);
+    }
+
+    if (success) {
+      setShowPositionForm(false);
+      resetPositionForm();
+    }
+  };
+
+  // When "current" is checked, clear the end date
+  const handleCurrentChange = (e) => {
+    const isCurrent = e.target.checked;
+    setPositionFormData({
+      ...positionFormData,
+      current: isCurrent,
+      endDate: isCurrent ? "" : positionFormData.endDate,
+    });
   };
 
   const formatDate = (dateString) => {
@@ -146,11 +266,6 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
               {editConnection && (
                 <div className="mb-4 mt-4">
                   <h6 className="border-bottom pb-2">Company Positions</h6>
-                  <div className="alert alert-info">
-                    <i className="bi bi-info-circle me-2"></i>
-                    To add or manage positions, use the Positions tab after
-                    saving this connection.
-                  </div>
 
                   {/* List of associated positions */}
                   {getConnectionPositions().length > 0 ? (
@@ -164,6 +279,7 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
                             <th>Title</th>
                             <th>Start Date</th>
                             <th>End Date</th>
+                            <th className="text-center">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -177,6 +293,32 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
                                   ? "Current"
                                   : formatDate(position.endDate)}
                               </td>
+                              <td className="text-center">
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-primary me-2"
+                                  onClick={(e) =>
+                                    handleEditPosition(position, e)
+                                  }
+                                  title="Edit Position"
+                                >
+                                  <i className="bi bi-pencil"></i>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-danger"
+                                  onClick={(e) =>
+                                    handleDeletePosition(
+                                      position._id,
+                                      position.title,
+                                      e
+                                    )
+                                  }
+                                  title="Delete Position"
+                                >
+                                  <i className="bi bi-trash"></i>
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -187,6 +329,174 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
                       No positions associated with this connection yet.
                     </div>
                   )}
+
+                  {/* Add Position Button */}
+                  <div className="text-end">
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm"
+                      onClick={handleAddPosition}
+                    >
+                      <i className="bi bi-plus-circle me-1"></i> Add Position
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Position Form - Shown when adding/editing a position */}
+              {showPositionForm && (
+                <div className="mt-4 mb-4 p-3 border rounded">
+                  <h6 className="border-bottom pb-2">
+                    {editingPosition ? "Edit Position" : "Add New Position"}
+                  </h6>
+                  <div>
+                    {" "}
+                    {/* Changed from form to div */}
+                    <div className="mb-3">
+                      <label htmlFor="positionCompany" className="form-label">
+                        Company
+                      </label>
+                      <select
+                        className={`form-select ${
+                          darkMode ? "bg-dark text-light border-secondary" : ""
+                        }`}
+                        id="positionCompany"
+                        value={positionFormData.companyId}
+                        onChange={(e) =>
+                          setPositionFormData({
+                            ...positionFormData,
+                            companyId: e.target.value,
+                          })
+                        }
+                        required
+                      >
+                        <option value="">Select a company</option>
+                        {companies.map((company) => (
+                          <option key={company._id} value={company._id}>
+                            {company.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="positionTitle" className="form-label">
+                        Title
+                      </label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          darkMode ? "bg-dark text-light border-secondary" : ""
+                        }`}
+                        id="positionTitle"
+                        placeholder="Enter job title"
+                        value={positionFormData.title}
+                        onChange={(e) =>
+                          setPositionFormData({
+                            ...positionFormData,
+                            title: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="positionStartDate" className="form-label">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        className={`form-control ${
+                          darkMode ? "bg-dark text-light border-secondary" : ""
+                        }`}
+                        id="positionStartDate"
+                        value={positionFormData.startDate}
+                        onChange={(e) =>
+                          setPositionFormData({
+                            ...positionFormData,
+                            startDate: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="positionEndDate" className="form-label">
+                        End Date
+                      </label>
+                      <input
+                        type="date"
+                        className={`form-control ${
+                          darkMode ? "bg-dark text-light border-secondary" : ""
+                        }`}
+                        id="positionEndDate"
+                        value={positionFormData.endDate}
+                        onChange={(e) =>
+                          setPositionFormData({
+                            ...positionFormData,
+                            endDate: e.target.value,
+                          })
+                        }
+                        disabled={positionFormData.current}
+                      />
+                    </div>
+                    <div className="mb-3 form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="positionCurrent"
+                        checked={positionFormData.current}
+                        onChange={handleCurrentChange}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="positionCurrent"
+                      >
+                        Currently Employed
+                      </label>
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="positionNotes" className="form-label">
+                        Notes
+                      </label>
+                      <textarea
+                        className={`form-control ${
+                          darkMode ? "bg-dark text-light border-secondary" : ""
+                        }`}
+                        id="positionNotes"
+                        rows="3"
+                        placeholder="Add notes about this position"
+                        value={positionFormData.notes}
+                        onChange={(e) =>
+                          setPositionFormData({
+                            ...positionFormData,
+                            notes: e.target.value,
+                          })
+                        }
+                      ></textarea>
+                    </div>
+                    <div className="text-end">
+                      <button
+                        type="button"
+                        className="btn btn-secondary me-2"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowPositionForm(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePositionSubmit(e);
+                        }}
+                      >
+                        {editingPosition ? "Update Position" : "Save Position"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
 
