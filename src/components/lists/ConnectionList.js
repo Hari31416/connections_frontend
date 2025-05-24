@@ -67,7 +67,7 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
         <div
           className={darkMode ? "card-body bg-dark text-light" : "card-body"}
         >
-          <div className="list-group">
+          <div className="list-group connection-list">
             {connections.length > 0 ? (
               connections.map((connection) => {
                 const connectionPositions = getConnectionPositions(
@@ -76,88 +76,103 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                 return (
                   <React.Fragment key={connection._id}>
                     <div
-                      className={`list-group-item d-flex justify-content-between align-items-center ${
+                      className={`list-group-item ${
                         darkMode ? "bg-dark text-light border-secondary" : ""
                       }`}
                     >
-                      <div className="d-flex align-items-center">
-                        <button
-                          className="btn btn-sm btn-outline-secondary me-3"
-                          onClick={() => toggleExpand(connection._id)}
-                        >
-                          <i
-                            className={`bi bi-chevron-${
+                      <div className="d-flex flex-wrap justify-content-between gap-2">
+                        <div className="d-flex align-items-start">
+                          <button
+                            className="btn btn-sm btn-outline-secondary me-2"
+                            onClick={() => toggleExpand(connection._id)}
+                            aria-label={
                               expandedConnection === connection._id
-                                ? "up"
-                                : "down"
-                            }`}
-                          ></i>
-                        </button>
-                        <div>
-                          <strong>{connection.name}</strong>
-                          {connectionPositions.length > 0 &&
-                            connectionPositions.some((p) => p.current) && (
-                              <span className="ms-2 badge bg-success">
-                                {
-                                  connectionPositions.find((p) => p.current)
-                                    ?.title
-                                }{" "}
-                                at{" "}
-                                {
-                                  connectionPositions.find((p) => p.current)
-                                    ?.companyId.name
-                                }
-                              </span>
-                            )}
-                          <div
-                            className={`small ${
-                              darkMode ? "text-light-50" : "text-muted"
-                            }`}
+                                ? "Collapse"
+                                : "Expand"
+                            }
                           >
-                            {connection.email && (
-                              <span className="me-3">
-                                <i className="bi bi-envelope me-1"></i>
-                                {connection.email}
-                              </span>
-                            )}
-                            {connection.phone && (
-                              <span>
-                                <i className="bi bi-telephone me-1"></i>
-                                {connection.phone}
-                              </span>
-                            )}
+                            <i
+                              className={`bi bi-chevron-${
+                                expandedConnection === connection._id
+                                  ? "up"
+                                  : "down"
+                              }`}
+                            ></i>
+                          </button>
+                          <div>
+                            <div className="fw-bold mb-1">
+                              {connection.name}
+                            </div>
+                            {connectionPositions.length > 0 &&
+                              connectionPositions.some((p) => p.current) && (
+                                <div className="mb-1">
+                                  <span className="badge bg-success">
+                                    {
+                                      connectionPositions.find((p) => p.current)
+                                        ?.title
+                                    }{" "}
+                                    at{" "}
+                                    {
+                                      connectionPositions.find((p) => p.current)
+                                        ?.companyId.name
+                                    }
+                                  </span>
+                                </div>
+                              )}
+                            <div
+                              className={`small ${
+                                darkMode ? "text-light-50" : "text-muted"
+                              }`}
+                            >
+                              {connection.email && (
+                                <div className="mb-1">
+                                  <i className="bi bi-envelope me-1"></i>
+                                  {connection.email}
+                                </div>
+                              )}
+                              {connection.phone && (
+                                <div>
+                                  <i className="bi bi-telephone me-1"></i>
+                                  {connection.phone}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="d-flex align-items-center">
-                        <span className="badge bg-info me-3">
-                          {connectionPositions.length}{" "}
-                          {connectionPositions.length === 1
-                            ? "position"
-                            : "positions"}
-                        </span>
-                        <button
-                          className="btn btn-sm btn-primary me-2"
-                          onClick={() => handleEditConnection(connection)}
-                        >
-                          <i className="bi bi-pencil"></i>
-                        </button>
-                        <button
-                          className="btn btn-sm btn-danger"
-                          onClick={() =>
-                            handleDeleteConnection(
-                              connection._id,
-                              connection.name
-                            )
-                          }
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? (
-                            <span className="spinner-border spinner-border-sm" />
-                          ) : (
-                            <i className="bi bi-trash"></i>
-                          )}
-                        </button>
+                        <div className="d-flex align-items-center flex-wrap gap-2">
+                          <span className="badge bg-info">
+                            {connectionPositions.length}{" "}
+                            {connectionPositions.length === 1
+                              ? "position"
+                              : "positions"}
+                          </span>
+                          <div className="btn-group btn-group-sm">
+                            <button
+                              className="btn btn-outline-primary"
+                              onClick={() => handleEditConnection(connection)}
+                              aria-label="Edit"
+                            >
+                              <i className="bi bi-pencil"></i>
+                            </button>
+                            <button
+                              className="btn btn-outline-danger"
+                              onClick={() =>
+                                handleDeleteConnection(
+                                  connection._id,
+                                  connection.name
+                                )
+                              }
+                              disabled={isDeleting}
+                              aria-label="Delete"
+                            >
+                              {isDeleting ? (
+                                <span className="spinner-border spinner-border-sm" />
+                              ) : (
+                                <i className="bi bi-trash"></i>
+                              )}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -169,20 +184,28 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                             : "bg-light"
                         }`}
                       >
-                        <div className="p-2">
+                        <div className="py-1">
                           {connection.notes && (
                             <div className="mb-3">
-                              <h6>Notes:</h6>
-                              <p className="text-muted">{connection.notes}</p>
+                              <h6 className="border-bottom pb-2">Notes:</h6>
+                              <p
+                                className={
+                                  darkMode ? "text-light-50" : "text-muted"
+                                }
+                              >
+                                {connection.notes}
+                              </p>
                             </div>
                           )}
 
-                          <h6>Company Positions:</h6>
+                          <h6 className="border-bottom pb-2">
+                            Company Positions:
+                          </h6>
                           {connectionPositions.length > 0 ? (
                             <div className="table-responsive">
                               <table
                                 className={`table table-sm ${
-                                  darkMode ? "table-dark" : "table-light"
+                                  darkMode ? "table table-dark" : "table-light"
                                 }`}
                               >
                                 <thead>
@@ -210,7 +233,11 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                               </table>
                             </div>
                           ) : (
-                            <p className="text-muted">
+                            <p
+                              className={
+                                darkMode ? "text-light-50" : "text-muted"
+                              }
+                            >
                               No positions associated with this connection.
                             </p>
                           )}

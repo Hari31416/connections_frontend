@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { AppProvider, useApp } from "./context/AppContext";
 import Auth from "./components/auth/Auth";
@@ -20,6 +20,15 @@ const MainApp = () => {
   const [editConnection, setEditConnection] = useState(null);
   const [editCompany, setEditCompany] = useState(null);
   const [editPosition, setEditPosition] = useState(null);
+
+  // Apply dark mode class to body element
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
 
   // Functions to handle modal toggling
   const openConnectionModal = () => setShowConnectionModal(true);

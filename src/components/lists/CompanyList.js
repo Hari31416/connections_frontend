@@ -65,75 +65,93 @@ const CompanyList = ({ openCompanyModal, setEditCompany }) => {
         <div
           className={darkMode ? "card-body bg-dark text-light" : "card-body"}
         >
-          <div className="list-group">
+          <div className="list-group company-list">
             {companies.length > 0 ? (
               companies.map((company) => {
                 const companyPositions = getCompanyPositions(company._id);
                 return (
                   <React.Fragment key={company._id}>
                     <div
-                      className={`list-group-item d-flex justify-content-between align-items-center ${
+                      className={`list-group-item ${
                         darkMode ? "bg-dark text-light border-secondary" : ""
                       }`}
                     >
-                      <div className="d-flex align-items-center">
-                        <button
-                          className="btn btn-sm btn-outline-secondary me-3"
-                          onClick={() => toggleExpand(company._id)}
-                        >
-                          <i
-                            className={`bi bi-chevron-${
-                              expandedCompany === company._id ? "up" : "down"
-                            }`}
-                          ></i>
-                        </button>
-                        <div>
-                          <strong>{company.name}</strong>{" "}
-                          <span className="text-muted">
-                            ({company.industry || "N/A"})
-                          </span>
-                        </div>
-                      </div>
-                      <div className="d-flex align-items-center">
-                        <span className="badge bg-info me-3">
-                          {companyPositions.length}{" "}
-                          {companyPositions.length === 1
-                            ? "position"
-                            : "positions"}
-                        </span>
-                        {company.website && (
-                          <a
-                            href={
-                              company.website.startsWith("http")
-                                ? company.website
-                                : `https://${company.website}`
+                      <div className="d-flex flex-wrap justify-content-between gap-2">
+                        <div className="d-flex align-items-start">
+                          <button
+                            className="btn btn-sm btn-outline-secondary me-2"
+                            onClick={() => toggleExpand(company._id)}
+                            aria-label={
+                              expandedCompany === company._id
+                                ? "Collapse"
+                                : "Expand"
                             }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-primary btn-sm me-2"
                           >
-                            <i className="bi bi-globe"></i>
-                          </a>
-                        )}
-                        <button
-                          className="btn btn-sm btn-primary me-2"
-                          onClick={() => handleEditCompany(company)}
-                        >
-                          <i className="bi bi-pencil"></i>
-                        </button>
-                        <button
-                          className="btn btn-sm btn-danger"
-                          onClick={() =>
-                            handleDeleteCompany(company._id, company.name)
-                          }
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? (
-                            <span className="spinner-border spinner-border-sm" />
-                          ) : (
-                            <i className="bi bi-trash"></i>
-                          )}
-                        </button>
+                            <i
+                              className={`bi bi-chevron-${
+                                expandedCompany === company._id ? "up" : "down"
+                              }`}
+                            ></i>
+                          </button>
+                          <div>
+                            <div className="fw-bold mb-1">{company.name}</div>
+                            <div
+                              className={
+                                darkMode ? "text-light-50" : "text-muted"
+                              }
+                            >
+                              {company.industry || "Industry not specified"}
+                            </div>
+                            {company.website && (
+                              <div className="mt-2">
+                                <a
+                                  href={
+                                    company.website.startsWith("http")
+                                      ? company.website
+                                      : `https://${company.website}`
+                                  }
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn btn-sm btn-primary"
+                                >
+                                  <i className="bi bi-globe me-1"></i>
+                                  Visit Website
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center flex-wrap gap-2">
+                          <span className="badge bg-info">
+                            {companyPositions.length}{" "}
+                            {companyPositions.length === 1
+                              ? "position"
+                              : "positions"}
+                          </span>
+                          <div className="btn-group btn-group-sm">
+                            <button
+                              className="btn btn-outline-primary"
+                              onClick={() => handleEditCompany(company)}
+                              aria-label="Edit"
+                            >
+                              <i className="bi bi-pencil"></i>
+                            </button>
+                            <button
+                              className="btn btn-outline-danger"
+                              onClick={() =>
+                                handleDeleteCompany(company._id, company.name)
+                              }
+                              disabled={isDeleting}
+                              aria-label="Delete"
+                            >
+                              {isDeleting ? (
+                                <span className="spinner-border spinner-border-sm" />
+                              ) : (
+                                <i className="bi bi-trash"></i>
+                              )}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -145,8 +163,10 @@ const CompanyList = ({ openCompanyModal, setEditCompany }) => {
                             : "bg-light"
                         }`}
                       >
-                        <div className="p-2">
-                          <h6>People at this Company:</h6>
+                        <div className="py-1">
+                          <h6 className="border-bottom pb-2">
+                            People at this Company:
+                          </h6>
                           {companyPositions.length > 0 ? (
                             <div className="table-responsive">
                               <table
@@ -179,7 +199,11 @@ const CompanyList = ({ openCompanyModal, setEditCompany }) => {
                               </table>
                             </div>
                           ) : (
-                            <p className="text-muted">
+                            <p
+                              className={
+                                darkMode ? "text-light-50" : "text-muted"
+                              }
+                            >
                               No positions associated with this company.
                             </p>
                           )}

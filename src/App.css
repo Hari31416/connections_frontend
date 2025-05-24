@@ -8,7 +8,17 @@
   --border-color: #dee2e6;
   --dark-bg: #212529;
   --dark-card: #343a40;
+  --dark-secondary: #495057;
   --modal-overlay: rgba(0, 0, 0, 0.5);
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+}
+
+/* Ensure dark mode is consistent throughout the app */
+body.dark-mode {
+  background-color: var(--dark-bg) !important;
+  color: var(--text-light) !important;
 }
 
 /* Sticky footer layout */
@@ -58,6 +68,16 @@ body, html {
   color: rgba(255, 255, 255, 0.5) !important;
 }
 
+/* Improved spacing for content */
+.card-body {
+  padding: var(--spacing-md) !important;
+}
+
+.list-group-item {
+  padding: var(--spacing-md) !important;
+}
+
+/* App container */
 .App {
   text-align: center;
 }
@@ -150,106 +170,29 @@ body, html {
 }
 
 .bg-dark .card {
-  background-color: var(--dark-card);
+  background-color: var(--dark-card) !important;
+}
+
+.bg-dark .list-group-item {
+  background-color: var(--dark-card) !important;
 }
 
 .bg-dark .border-dark {
-  border-color: #495057 !important;
+  border-color: var(--dark-secondary) !important;
 }
 
-/* Form control focus states */
-.form-control:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+/* Improved responsive spacing */
+.mb-4 {
+  margin-bottom: var(--spacing-lg) !important;
 }
 
-/* Card header styling */
-.card-header {
-  border-bottom: none;
+.mb-3 {
+  margin-bottom: var(--spacing-md) !important;
 }
 
-/* Table adjustments */
-.table-hover tbody tr:hover {
-  background-color: rgba(52, 152, 219, 0.05);
-}
-
-/* List group styling */
-.list-group-item {
-  border-left: none;
-  border-right: none;
-}
-
-/* Modal styling */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1050;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  outline: 0;
-}
-
-.modal-dialog {
-  position: relative;
-  width: auto;
-  margin: 1.75rem auto;
-  max-width: 500px;
-  pointer-events: none;
-}
-
-.modal.show .modal-dialog {
-  transform: none;
-  transition: transform 0.3s ease-out;
-}
-
-.modal-content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  pointer-events: auto;
-  background-clip: padding-box;
-  border-radius: 0.3rem;
-  outline: 0;
-}
-
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1040;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--modal-overlay);
-}
-
-.modal-backdrop.show {
-  opacity: 1;
-}
-
-.btn-close {
-  box-sizing: content-box;
-  color: #000;
-  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
-  border: 0;
-  opacity: .5;
-}
-
-.dark-mode .btn-close {
-  filter: invert(1) grayscale(100%) brightness(200%);
-}
-
-/* Add button enhancements */
-.btn-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.btn-add i {
-  font-size: 0.875rem;
+/* Button spacing fix for small screens */
+.btn-group-sm > .btn {
+  padding: 0.25rem 0.5rem !important;
 }
 
 /* Responsive adjustments */
@@ -261,5 +204,46 @@ body, html {
   
   .modal-dialog {
     margin: 0.5rem;
+  }
+  
+  /* Improved spacing for small screens */
+  .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  .list-group-item {
+    padding: 0.75rem !important;
+  }
+  
+  /* Stack button groups on small screens */
+  .d-flex.align-items-center {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  /* Ensure dark mode applies to all containers */
+  .container-fluid, .min-vh-100 {
+    background-color: inherit !important;
+  }
+  
+  /* Better spacing for mobile tables */
+  .table-responsive {
+    margin-bottom: 0;
+  }
+  
+  .table th, .table td {
+    padding: 0.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Even more compact on very small screens */
+  .card-header {
+    padding: 0.75rem !important;
+  }
+  
+  .btn-sm {
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.75rem !important;
   }
 }
