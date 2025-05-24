@@ -1,6 +1,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-
-const API = "http://localhost:4000/api";
+import { API } from "./apiUtils";
+import * as connectionService from "./connectionService";
+import * as companyService from "./companyService";
+import * as positionService from "./positionService";
+import * as authService from "./authService";
 
 const AppContext = createContext();
 
@@ -18,35 +21,20 @@ export const AppProvider = ({ children }) => {
   const refreshData = () => {
     if (token) {
       // Fetch connections
-      fetch(API + "/connections", {
-        headers: { Authorization: "Bearer " + token },
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error("Failed to fetch connections");
-          return r.json();
-        })
+      connectionService
+        .fetchConnections(token)
         .then(setConnections)
         .catch((error) => console.error("Error fetching connections:", error));
 
       // Fetch companies
-      fetch(API + "/companies", {
-        headers: { Authorization: "Bearer " + token },
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error("Failed to fetch companies");
-          return r.json();
-        })
+      companyService
+        .fetchCompanies(token)
         .then(setCompanies)
         .catch((error) => console.error("Error fetching companies:", error));
 
       // Fetch positions
-      fetch(API + "/positions", {
-        headers: { Authorization: "Bearer " + token },
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error("Failed to fetch positions");
-          return r.json();
-        })
+      positionService
+        .fetchPositions(token)
         .then(setPositions)
         .catch((error) => console.error("Error fetching positions:", error));
     }
@@ -58,288 +46,121 @@ export const AppProvider = ({ children }) => {
     }
   }, [token]);
 
-  const handleAuth = (endpoint, email, password) => {
-    return fetch(API + endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.token) {
-          setToken(data.token);
-          localStorage.setItem("token", data.token);
-          setView("main");
-          return true;
-        } else {
-          alert(data.error || "Authentication failed.");
-          return false;
-        }
-      })
-      .catch((error) => {
-        console.error("Authentication error:", error);
-        return false;
-      });
+  const handleAuth = async (endpoint, email, password) => {
+    const authFunction =
+      endpoint === "/login" ? authService.loginUser : authService.registerUser;
+    const data = await authFunction(email, password);
+
+    if (data.token) {
+      setToken(data.token);
+      localStorage.setItem("token", data.token);
+      setView("main");
+      return true;
+    } else {
+      alert(data.error || "Authentication failed.");
+      return false;
+    }
   };
 
-  // Connection CRUD operations
-  const addConnection = (newConn) => {
-    return fetch(API + "/connections", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify(newConn),
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to add connection");
-        return r.json();
-      })
-      .then((conn) => {
-        setConnections([...connections, conn]);
-        return conn;
-      })
-      .catch((error) => {
-        console.error("Error adding connection:", error);
-        return false;
-      });
+  // Connection operations with state updates
+  const addConnection = async (newConn) => {
+    const conn = await connectionService.addConnection(newConn, token);
+    if (conn) {
+      setConnections([...connections, conn]);
+      return conn;
+    }
+    return false;
   };
 
-  const updateConnection = (updatedConn) => {
-    return fetch(`${API}/connections/${updatedConn.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        name: updatedConn.name,
-        email: updatedConn.email,
-        phone: updatedConn.phone,
-        notes: updatedConn.notes,
-      }),
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to update connection");
-        return r.json();
-      })
-      .then((conn) => {
-        // Update the connections state with the updated connection
-        setConnections(connections.map((c) => (c._id === conn._id ? conn : c)));
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error updating connection:", error);
-        return false;
-      });
+  const updateConnection = async (updatedConn) => {
+    const conn = await connectionService.updateConnection(updatedConn, token);
+    if (conn) {
+      setConnections(connections.map((c) => (c._id === conn._id ? conn : c)));
+      return true;
+    }
+    return false;
   };
 
-  const deleteConnection = (connectionId) => {
-    return fetch(`${API}/connections/${connectionId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to delete connection");
-        return r.json();
-      })
-      .then(() => {
-        // Remove the deleted connection from state
-        setConnections(connections.filter((c) => c._id !== connectionId));
-        // Remove positions associated with this connection
-        setPositions(
-          positions.filter((p) => p.connectionId._id !== connectionId)
-        );
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error deleting connection:", error);
-        return false;
-      });
+  const deleteConnection = async (connectionId) => {
+    const success = await connectionService.deleteConnection(
+      connectionId,
+      token
+    );
+    if (success) {
+      setConnections(connections.filter((c) => c._id !== connectionId));
+      // Remove positions associated with this connection
+      setPositions(
+        positions.filter((p) => p.connectionId._id !== connectionId)
+      );
+      return true;
+    }
+    return false;
   };
 
-  // Company CRUD operations
-  const addCompany = (newComp) => {
-    return fetch(API + "/companies", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify(newComp),
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to add company");
-        return r.json();
-      })
-      .then((comp) => {
-        setCompanies([...companies, comp]);
-        return comp;
-      })
-      .catch((error) => {
-        console.error("Error adding company:", error);
-        return false;
-      });
+  // Company operations with state updates
+  const addCompany = async (newComp) => {
+    const comp = await companyService.addCompany(newComp, token);
+    if (comp) {
+      setCompanies([...companies, comp]);
+      return comp;
+    }
+    return false;
   };
 
-  const updateCompany = (updatedComp) => {
-    return fetch(`${API}/companies/${updatedComp.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        name: updatedComp.name,
-        industry: updatedComp.industry,
-        website: updatedComp.website,
-      }),
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to update company");
-        return r.json();
-      })
-      .then((comp) => {
-        // Update the companies state with the updated company
-        setCompanies(companies.map((c) => (c._id === comp._id ? comp : c)));
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error updating company:", error);
-        return false;
-      });
+  const updateCompany = async (updatedComp) => {
+    const comp = await companyService.updateCompany(updatedComp, token);
+    if (comp) {
+      setCompanies(companies.map((c) => (c._id === comp._id ? comp : c)));
+      return true;
+    }
+    return false;
   };
 
-  const deleteCompany = (companyId) => {
-    return fetch(`${API}/companies/${companyId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to delete company");
-        return r.json();
-      })
-      .then(() => {
-        // Remove the deleted company from state
-        setCompanies(companies.filter((c) => c._id !== companyId));
-        // Remove positions associated with this company
-        setPositions(positions.filter((p) => p.companyId._id !== companyId));
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error deleting company:", error);
-        return false;
-      });
+  const deleteCompany = async (companyId) => {
+    const success = await companyService.deleteCompany(companyId, token);
+    if (success) {
+      setCompanies(companies.filter((c) => c._id !== companyId));
+      // Remove positions associated with this company
+      setPositions(positions.filter((p) => p.companyId._id !== companyId));
+      return true;
+    }
+    return false;
   };
 
-  // Position CRUD operations
-  const addPosition = (newPos) => {
-    return fetch(API + "/positions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify(newPos),
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to add position");
-        return r.json();
-      })
-      .then((pos) => {
-        setPositions([...positions, pos]);
-        return pos;
-      })
-      .catch((error) => {
-        console.error("Error adding position:", error);
-        return false;
-      });
+  // Position operations with state updates
+  const addPosition = async (newPos) => {
+    const pos = await positionService.addPosition(newPos, token);
+    if (pos) {
+      setPositions([...positions, pos]);
+      return pos;
+    }
+    return false;
   };
 
-  const updatePosition = (updatedPos) => {
-    return fetch(`${API}/positions/${updatedPos.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({
-        title: updatedPos.title,
-        startDate: updatedPos.startDate,
-        endDate: updatedPos.endDate,
-        current: updatedPos.current,
-        notes: updatedPos.notes,
-      }),
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to update position");
-        return r.json();
-      })
-      .then((pos) => {
-        // Update the positions state with the updated position
-        setPositions(positions.map((p) => (p._id === pos._id ? pos : p)));
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error updating position:", error);
-        return false;
-      });
+  const updatePosition = async (updatedPos) => {
+    const pos = await positionService.updatePosition(updatedPos, token);
+    if (pos) {
+      setPositions(positions.map((p) => (p._id === pos._id ? pos : p)));
+      return true;
+    }
+    return false;
   };
 
-  const deletePosition = (positionId) => {
-    return fetch(`${API}/positions/${positionId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to delete position");
-        return r.json();
-      })
-      .then(() => {
-        // Remove the deleted position from state
-        setPositions(positions.filter((p) => p._id !== positionId));
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error deleting position:", error);
-        return false;
-      });
+  const deletePosition = async (positionId) => {
+    const success = await positionService.deletePosition(positionId, token);
+    if (success) {
+      setPositions(positions.filter((p) => p._id !== positionId));
+      return true;
+    }
+    return false;
   };
 
-  // Helper functions to get positions by connection or company
   const getPositionsByConnection = (connectionId) => {
-    return fetch(`${API}/positions/connection/${connectionId}`, {
-      headers: { Authorization: "Bearer " + token },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to fetch positions");
-        return r.json();
-      })
-      .catch((error) => {
-        console.error("Error fetching positions:", error);
-        return [];
-      });
+    return positionService.getPositionsByConnection(connectionId, token);
   };
 
   const getPositionsByCompany = (companyId) => {
-    return fetch(`${API}/positions/company/${companyId}`, {
-      headers: { Authorization: "Bearer " + token },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to fetch positions");
-        return r.json();
-      })
-      .catch((error) => {
-        console.error("Error fetching positions:", error);
-        return [];
-      });
+    return positionService.getPositionsByCompany(companyId, token);
   };
 
   const logout = () => {
