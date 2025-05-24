@@ -1,11 +1,11 @@
-import React from 'react';
-import { useApp } from '../../context/AppContext';
+import React from "react";
+import { useApp } from "../../context/AppContext";
 
 const ConnectionList = ({ openConnectionModal }) => {
   const { darkMode, connections } = useApp();
 
   return (
-    <div className="col-lg-6">
+    <div className="col-12">
       <div
         className={`card shadow-sm h-100 ${
           darkMode ? "bg-dark border-dark" : "border-light"
@@ -21,9 +21,7 @@ const ConnectionList = ({ openConnectionModal }) => {
           </button>
         </div>
         <div
-          className={
-            darkMode ? "card-body bg-dark text-light" : "card-body"
-          }
+          className={darkMode ? "card-body bg-dark text-light" : "card-body"}
         >
           <div className="table-responsive">
             <table

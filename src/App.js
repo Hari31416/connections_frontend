@@ -41,8 +41,10 @@ const MainApp = () => {
         <Header />
 
         <main className="flex-grow-1 d-flex flex-column">
-          <div className="row g-4 flex-grow-1">
+          <div className="row mb-4">
             <ConnectionList openConnectionModal={openConnectionModal} />
+          </div>
+          <div className="row">
             <CompanyList openCompanyModal={openCompanyModal} />
           </div>
         </main>
