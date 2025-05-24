@@ -158,6 +158,32 @@ const ConnectionDetails = ({ connectionId, onBack, viewCompany }) => {
                         </a>
                       </div>
                     )}
+                    {connection.linkedinUserId && (
+                      <div className="mb-2">
+                        <i className="bi bi-linkedin me-2"></i>
+                        <a
+                          href={`https://www.linkedin.com/in/${connection.linkedinUserId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={darkMode ? "text-light" : "text-primary"}
+                        >
+                          {connection.linkedinUserId}
+                        </a>
+                      </div>
+                    )}
+                    {connection.githubUserId && (
+                      <div className="mb-2">
+                        <i className="bi bi-github me-2"></i>
+                        <a
+                          href={`https://github.com/${connection.githubUserId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={darkMode ? "text-light" : "text-primary"}
+                        >
+                          {connection.githubUserId}
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="col-md-6">

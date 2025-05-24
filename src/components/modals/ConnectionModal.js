@@ -39,6 +39,8 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
         name: editConnection.name || "",
         email: editConnection.email || "",
         phone: editConnection.phone || "",
+        linkedinUserId: editConnection.linkedinUserId || "",
+        githubUserId: editConnection.githubUserId || "",
         notes: editConnection.notes || "",
       });
     } else {
@@ -47,6 +49,8 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
         name: "",
         email: "",
         phone: "",
+        linkedinUserId: "",
+        githubUserId: "",
         notes: "",
       });
     }
@@ -260,6 +264,48 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
                     setNewConn({ ...newConn, phone: e.target.value })
                   }
                 />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="connectionLinkedin" className="form-label">
+                  LinkedIn User ID
+                </label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="connectionLinkedin"
+                  placeholder="e.g. john-doe-123456789"
+                  value={newConn.linkedinUserId}
+                  onChange={(e) =>
+                    setNewConn({ ...newConn, linkedinUserId: e.target.value })
+                  }
+                />
+                <small className="form-text text-muted">
+                  Enter the LinkedIn username or profile ID (the part after /in/
+                  in the LinkedIn URL)
+                </small>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="connectionGithub" className="form-label">
+                  GitHub User ID
+                </label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="connectionGithub"
+                  placeholder="e.g. johndoe"
+                  value={newConn.githubUserId}
+                  onChange={(e) =>
+                    setNewConn({ ...newConn, githubUserId: e.target.value })
+                  }
+                />
+                <small className="form-text text-muted">
+                  Enter the GitHub username (the part after github.com/ in the
+                  GitHub URL)
+                </small>
               </div>
 
               {/* Show company positions when editing */}

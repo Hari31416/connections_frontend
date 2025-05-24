@@ -30,6 +30,8 @@ export const updateConnection = async (updatedConn, token) => {
       name: updatedConn.name,
       email: updatedConn.email,
       phone: updatedConn.phone,
+      linkedinUserId: updatedConn.linkedinUserId,
+      githubUserId: updatedConn.githubUserId,
       notes: updatedConn.notes,
     };
     return await putWithAuth(`/connections/${updatedConn.id}`, payload, token);
