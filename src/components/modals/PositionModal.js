@@ -6,6 +6,7 @@ const PositionModal = ({
   closeModal,
   editPosition = null,
   preselectedConnectionId = null,
+  preselectedCompanyId = null,
 }) => {
   const { darkMode, companies, connections, addPosition, updatePosition } =
     useApp();
@@ -41,7 +42,7 @@ const PositionModal = ({
       // Reset form when adding a new position
       setNewPos({
         connectionId: preselectedConnectionId || "",
-        companyId: "",
+        companyId: preselectedCompanyId || "",
         title: "",
         startDate: "",
         endDate: "",
@@ -49,7 +50,7 @@ const PositionModal = ({
         notes: "",
       });
     }
-  }, [editPosition, showModal, preselectedConnectionId]);
+  }, [editPosition, showModal, preselectedConnectionId, preselectedCompanyId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -146,7 +147,7 @@ const PositionModal = ({
                     setNewPos({ ...newPos, companyId: e.target.value })
                   }
                   required
-                  disabled={editPosition} // Disable when editing existing position
+                  disabled={editPosition || preselectedCompanyId} // Disable when editing existing position or preselected
                 >
                   <option value="">Select a company</option>
                   {companies.map((company) => (

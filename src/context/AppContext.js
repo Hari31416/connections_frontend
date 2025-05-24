@@ -11,7 +11,7 @@ export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [connections, setConnections] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [positions, setPositions] = useState([]);

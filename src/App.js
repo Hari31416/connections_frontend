@@ -12,6 +12,7 @@ import CompanyModal from "./components/modals/CompanyModal";
 import PositionModal from "./components/modals/PositionModal";
 import ModalBackdrop from "./components/modals/ModalBackdrop";
 import ConnectionDetails from "./components/pages/ConnectionDetails";
+import CompanyDetails from "./components/pages/CompanyDetails";
 
 const MainApp = () => {
   const { darkMode, token } = useApp();
@@ -22,6 +23,7 @@ const MainApp = () => {
   const [editCompany, setEditCompany] = useState(null);
   const [editPosition, setEditPosition] = useState(null);
   const [viewConnectionId, setViewConnectionId] = useState(null);
+  const [viewCompanyId, setViewCompanyId] = useState(null);
 
   // Apply dark mode class to body element
   useEffect(() => {
@@ -47,9 +49,15 @@ const MainApp = () => {
     setViewConnectionId(connectionId);
   };
 
+  // Function to view company details
+  const viewCompany = (companyId) => {
+    setViewCompanyId(companyId);
+  };
+
   // Function to go back to main view
   const backToMain = () => {
     setViewConnectionId(null);
+    setViewCompanyId(null);
   };
 
   // If not logged in, show Auth component
@@ -86,6 +94,32 @@ const MainApp = () => {
     );
   }
 
+  // Company Details View
+  if (viewCompanyId) {
+    return (
+      <div
+        className={`d-flex flex-column min-vh-100 ${
+          darkMode ? "bg-dark text-light" : "bg-light text-dark"
+        }`}
+      >
+        <div
+          className="container-fluid d-flex flex-column flex-grow-1"
+          style={{ maxWidth: 1140, padding: "0 15px" }}
+        >
+          <Header />
+
+          <main className="flex-grow-1 d-flex flex-column">
+            <div className="row mb-4">
+              <CompanyDetails companyId={viewCompanyId} onBack={backToMain} />
+            </div>
+          </main>
+
+          <Footer />
+        </div>
+      </div>
+    );
+  }
+
   // Main App View
   return (
     <div
@@ -111,6 +145,7 @@ const MainApp = () => {
             <CompanyList
               openCompanyModal={openCompanyModal}
               setEditCompany={setEditCompany}
+              viewCompany={viewCompany}
             />
           </div>
           <div className="row mb-4">

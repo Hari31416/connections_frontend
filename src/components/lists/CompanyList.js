@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
 
-const CompanyList = ({ openCompanyModal, setEditCompany }) => {
+const CompanyList = ({ openCompanyModal, setEditCompany, viewCompany }) => {
   const { darkMode, companies, deleteCompany, positions } = useApp();
   const [expandedCompany, setExpandedCompany] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -94,7 +94,24 @@ const CompanyList = ({ openCompanyModal, setEditCompany }) => {
                             ></i>
                           </button>
                           <div>
-                            <div className="fw-bold mb-1">{company.name}</div>
+                            <div className="fw-bold mb-1">
+                              <a
+                                href="#"
+                                className={
+                                  darkMode ? "text-light" : "text-dark"
+                                }
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  viewCompany(company._id);
+                                }}
+                                style={{
+                                  textDecoration: "none",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                {company.name}
+                              </a>
+                            </div>
                             <div
                               className={
                                 darkMode ? "text-light-50" : "text-muted"
@@ -129,6 +146,13 @@ const CompanyList = ({ openCompanyModal, setEditCompany }) => {
                               : "positions"}
                           </span>
                           <div className="btn-group btn-group-sm">
+                            <button
+                              className="btn btn-outline-info"
+                              onClick={() => viewCompany(company._id)}
+                              aria-label="View Details"
+                            >
+                              <i className="bi bi-eye"></i>
+                            </button>
                             <button
                               className="btn btn-outline-primary"
                               onClick={() => handleEditCompany(company)}
