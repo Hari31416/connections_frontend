@@ -109,7 +109,11 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                                 }
                               </span>
                             )}
-                          <div className="small text-muted">
+                          <div
+                            className={`small ${
+                              darkMode ? "text-light-50" : "text-muted"
+                            }`}
+                          >
                             {connection.email && (
                               <span className="me-3">
                                 <i className="bi bi-envelope me-1"></i>

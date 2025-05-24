@@ -38,6 +38,26 @@ body, html {
   overflow-y: auto;
 }
 
+/* Dark mode placeholder styles */
+.bg-dark .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1;
+}
+
+.bg-dark input::placeholder,
+.bg-dark textarea::placeholder,
+.bg-dark select::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1;
+}
+
+/* Specific selector for dark mode inputs to ensure higher specificity */
+.bg-dark input.form-control::placeholder,
+.bg-dark textarea.form-control::placeholder,
+.bg-dark select.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
 .App {
   text-align: center;
 }
@@ -106,6 +126,16 @@ body, html {
 
 .bg-primary {
   background-color: var(--primary-color) !important;
+}
+
+/* Dark mode text helper classes */
+.text-light-50 {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Fix for text-muted in dark mode */
+.bg-dark .text-muted {
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 /* Container adjustments */
