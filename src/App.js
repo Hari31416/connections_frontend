@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-// No need to import Bootstrap CSS here if it's already in index.html
-// import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
 const API = "http://localhost:4000/api";
 
@@ -11,13 +10,35 @@ function App() {
   const [password, setPassword] = useState("");
   const [connections, setConnections] = useState([]);
   const [companies, setCompanies] = useState([]);
-  const [newConn, setNewConn] = useState({ name: "", email: "", phone: "" });
+  const [newConn, setNewConn] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    notes: "",
+  });
   const [newComp, setNewComp] = useState({
     name: "",
     industry: "",
     website: "",
   });
   const [darkMode, setDarkMode] = useState(false); // Default to light mode
+
+  // New state variables for modals
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
+
+  // Functions to handle modal toggling
+  const openConnectionModal = () => setShowConnectionModal(true);
+  const closeConnectionModal = () => {
+    setShowConnectionModal(false);
+    setNewConn({ name: "", email: "", phone: "", notes: "" }); // Reset form
+  };
+
+  const openCompanyModal = () => setShowCompanyModal(true);
+  const closeCompanyModal = () => {
+    setShowCompanyModal(false);
+    setNewComp({ name: "", industry: "", website: "" }); // Reset form
+  };
 
   useEffect(() => {
     if (token) {
@@ -81,7 +102,7 @@ function App() {
       })
       .then((conn) => {
         setConnections([...connections, conn]);
-        setNewConn({ name: "", email: "", phone: "" }); // Clear form
+        closeConnectionModal(); // Close modal on success
       })
       .catch((error) => console.error("Error adding connection:", error));
   }
@@ -101,10 +122,239 @@ function App() {
       })
       .then((comp) => {
         setCompanies([...companies, comp]);
-        setNewComp({ name: "", industry: "", website: "" }); // Clear form
+        closeCompanyModal(); // Close modal on success
       })
       .catch((error) => console.error("Error adding company:", error));
   }
+
+  // Connection Modal Component
+  const ConnectionModal = () => (
+    <div
+      className={`modal fade ${showConnectionModal ? "show" : ""}`}
+      style={{ display: showConnectionModal ? "block" : "none" }}
+      tabIndex="-1"
+      role="dialog"
+      aria-labelledby="connectionModalLabel"
+      aria-hidden={!showConnectionModal}
+    >
+      <div className="modal-dialog" role="document">
+        <div
+          className={`modal-content ${darkMode ? "bg-dark text-light" : ""}`}
+        >
+          <div className="modal-header">
+            <h5 className="modal-title" id="connectionModalLabel">
+              Add New Connection
+            </h5>
+            <button
+              type="button"
+              className="btn-close"
+              onClick={closeConnectionModal}
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            <form>
+              <div className="mb-3">
+                <label htmlFor="connectionName" className="form-label">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="connectionName"
+                  placeholder="Enter name"
+                  value={newConn.name}
+                  onChange={(e) =>
+                    setNewConn({ ...newConn, name: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="connectionEmail" className="form-label">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="connectionEmail"
+                  placeholder="Enter email"
+                  value={newConn.email}
+                  onChange={(e) =>
+                    setNewConn({ ...newConn, email: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="connectionPhone" className="form-label">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="connectionPhone"
+                  placeholder="Enter phone number"
+                  value={newConn.phone}
+                  onChange={(e) =>
+                    setNewConn({ ...newConn, phone: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="connectionNotes" className="form-label">
+                  Notes
+                </label>
+                <textarea
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="connectionNotes"
+                  rows="3"
+                  placeholder="Add notes about this connection"
+                  value={newConn.notes}
+                  onChange={(e) =>
+                    setNewConn({ ...newConn, notes: e.target.value })
+                  }
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={closeConnectionModal}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={addConnection}
+            >
+              Save Connection
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Company Modal Component
+  const CompanyModal = () => (
+    <div
+      className={`modal fade ${showCompanyModal ? "show" : ""}`}
+      style={{ display: showCompanyModal ? "block" : "none" }}
+      tabIndex="-1"
+      role="dialog"
+      aria-labelledby="companyModalLabel"
+      aria-hidden={!showCompanyModal}
+    >
+      <div className="modal-dialog" role="document">
+        <div
+          className={`modal-content ${darkMode ? "bg-dark text-light" : ""}`}
+        >
+          <div className="modal-header">
+            <h5 className="modal-title" id="companyModalLabel">
+              Add New Company
+            </h5>
+            <button
+              type="button"
+              className="btn-close"
+              onClick={closeCompanyModal}
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            <form>
+              <div className="mb-3">
+                <label htmlFor="companyName" className="form-label">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="companyName"
+                  placeholder="Enter company name"
+                  value={newComp.name}
+                  onChange={(e) =>
+                    setNewComp({ ...newComp, name: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="companyIndustry" className="form-label">
+                  Industry
+                </label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="companyIndustry"
+                  placeholder="Enter industry"
+                  value={newComp.industry}
+                  onChange={(e) =>
+                    setNewComp({ ...newComp, industry: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="companyWebsite" className="form-label">
+                  Website
+                </label>
+                <input
+                  type="url"
+                  className={`form-control ${
+                    darkMode ? "bg-dark text-light border-secondary" : ""
+                  }`}
+                  id="companyWebsite"
+                  placeholder="Enter website URL"
+                  value={newComp.website}
+                  onChange={(e) =>
+                    setNewComp({ ...newComp, website: e.target.value })
+                  }
+                />
+              </div>
+            </form>
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={closeCompanyModal}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={addCompany}
+            >
+              Save Company
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Modal backdrop
+  const ModalBackdrop = ({ show }) => (
+    <div
+      className={`modal-backdrop fade ${show ? "show" : ""}`}
+      style={{ display: show ? "block" : "none" }}
+    ></div>
+  );
 
   // Login/Register View
   if (!token) {
@@ -226,15 +476,21 @@ function App() {
                   darkMode ? "bg-dark border-dark" : "border-light"
                 }`}
               >
-                <div className="card-header bg-primary text-white">
+                <div className="card-header d-flex justify-content-between align-items-center bg-primary text-white">
                   <h5 className="mb-0">Your Connections</h5>
+                  <button
+                    className="btn btn-sm btn-light"
+                    onClick={openConnectionModal}
+                  >
+                    <i className="bi bi-plus-lg"></i> Add New
+                  </button>
                 </div>
                 <div
                   className={
                     darkMode ? "card-body bg-dark text-light" : "card-body"
                   }
                 >
-                  <div className="table-responsive mb-4">
+                  <div className="table-responsive">
                     <table
                       className={`table table-hover align-middle mb-0 ${
                         darkMode ? "table-dark" : ""
@@ -268,57 +524,6 @@ function App() {
                       </tbody>
                     </table>
                   </div>
-
-                  {/* Add New Connection Form */}
-                  <h6 className="mb-3">Add New Connection</h6>
-                  <div className="row g-2">
-                    <div className="col-md-12">
-                      <input
-                        className={`form-control ${
-                          darkMode ? "bg-dark text-light border-secondary" : ""
-                        }`}
-                        placeholder="Name"
-                        value={newConn.name}
-                        onChange={(e) =>
-                          setNewConn({ ...newConn, name: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        className={`form-control ${
-                          darkMode ? "bg-dark text-light border-secondary" : ""
-                        }`}
-                        placeholder="Email (Optional)"
-                        type="email"
-                        value={newConn.email}
-                        onChange={(e) =>
-                          setNewConn({ ...newConn, email: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        className={`form-control ${
-                          darkMode ? "bg-dark text-light border-secondary" : ""
-                        }`}
-                        placeholder="Phone (Optional)"
-                        type="tel"
-                        value={newConn.phone}
-                        onChange={(e) =>
-                          setNewConn({ ...newConn, phone: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="col-12">
-                      <button
-                        className="btn btn-primary w-100 mt-2"
-                        onClick={addConnection}
-                      >
-                        Add Connection
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -330,8 +535,14 @@ function App() {
                   darkMode ? "bg-dark border-dark" : "border-light"
                 }`}
               >
-                <div className="card-header bg-primary text-white">
+                <div className="card-header d-flex justify-content-between align-items-center bg-primary text-white">
                   <h5 className="mb-0">Your Companies</h5>
+                  <button
+                    className="btn btn-sm btn-light"
+                    onClick={openCompanyModal}
+                  >
+                    <i className="bi bi-plus-lg"></i> Add New
+                  </button>
                 </div>
                 <div
                   className={
@@ -339,7 +550,7 @@ function App() {
                   }
                 >
                   <ul
-                    className={`list-group mb-4 ${
+                    className={`list-group ${
                       darkMode ? "list-group-flush" : ""
                     }`}
                   >
@@ -355,9 +566,7 @@ function App() {
                         >
                           <div>
                             <strong>{c.name}</strong>{" "}
-                            <span className="text-muted small">
-                              ({c.industry || "N/A"})
-                            </span>
+                            <span>({c.industry || "N/A"})</span>
                           </div>
                           {c.website && (
                             <a
@@ -385,56 +594,6 @@ function App() {
                       </li>
                     )}
                   </ul>
-
-                  {/* Add New Company Form */}
-                  <h6 className="mb-3">Add New Company</h6>
-                  <div className="row g-2">
-                    <div className="col-md-12">
-                      <input
-                        className={`form-control ${
-                          darkMode ? "bg-dark text-light border-secondary" : ""
-                        }`}
-                        placeholder="Company Name"
-                        value={newComp.name}
-                        onChange={(e) =>
-                          setNewComp({ ...newComp, name: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        className={`form-control ${
-                          darkMode ? "bg-dark text-light border-secondary" : ""
-                        }`}
-                        placeholder="Industry (Optional)"
-                        value={newComp.industry}
-                        onChange={(e) =>
-                          setNewComp({ ...newComp, industry: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        className={`form-control ${
-                          darkMode ? "bg-dark text-light border-secondary" : ""
-                        }`}
-                        placeholder="Website (Optional)"
-                        type="url"
-                        value={newComp.website}
-                        onChange={(e) =>
-                          setNewComp({ ...newComp, website: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="col-12">
-                      <button
-                        className="btn btn-primary w-100 mt-2"
-                        onClick={addCompany}
-                      >
-                        Add Company
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -458,6 +617,11 @@ function App() {
           </button>
         </footer>
       </div>
+
+      {/* Render Modals */}
+      <ConnectionModal />
+      <CompanyModal />
+      <ModalBackdrop show={showConnectionModal || showCompanyModal} />
     </div>
   );
 }
