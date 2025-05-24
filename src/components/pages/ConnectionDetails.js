@@ -3,7 +3,7 @@ import { useApp } from "../../context/AppContext";
 import PositionModal from "../modals/PositionModal";
 import ModalBackdrop from "../modals/ModalBackdrop";
 
-const ConnectionDetails = ({ connectionId, onBack }) => {
+const ConnectionDetails = ({ connectionId, onBack, viewCompany }) => {
   const { darkMode, connections, positions, companies, deletePosition } =
     useApp();
   const [connection, setConnection] = useState(null);
@@ -188,7 +188,17 @@ const ConnectionDetails = ({ connectionId, onBack }) => {
                 <div className="card-header">
                   <h5 className="mb-0">
                     <i className="bi bi-building me-2"></i>
-                    {company.name}
+                    <a
+                      href="#"
+                      className={darkMode ? "text-light" : "text-dark"}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        viewCompany(company._id);
+                      }}
+                      style={{ textDecoration: "none", cursor: "pointer" }}
+                    >
+                      {company.name}
+                    </a>
                     {company.industry && (
                       <span className={`ms-2 badge bg-secondary`}>
                         {company.industry}

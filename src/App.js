@@ -51,6 +51,7 @@ const MainApp = () => {
 
   // Function to view company details
   const viewCompany = (companyId) => {
+    setViewConnectionId(null); // Clear the connection view first
     setViewCompanyId(companyId);
   };
 
@@ -84,6 +85,7 @@ const MainApp = () => {
               <ConnectionDetails
                 connectionId={viewConnectionId}
                 onBack={backToMain}
+                viewCompany={viewCompany}
               />
             </div>
           </main>
@@ -110,7 +112,11 @@ const MainApp = () => {
 
           <main className="flex-grow-1 d-flex flex-column">
             <div className="row mb-4">
-              <CompanyDetails companyId={viewCompanyId} onBack={backToMain} />
+              <CompanyDetails
+                companyId={viewCompanyId}
+                onBack={backToMain}
+                viewConnection={viewConnection}
+              />
             </div>
           </main>
 
@@ -152,6 +158,8 @@ const MainApp = () => {
             <PositionList
               openPositionModal={openPositionModal}
               setEditPosition={setEditPosition}
+              viewConnection={viewConnection}
+              viewCompany={viewCompany}
             />
           </div>
         </main>

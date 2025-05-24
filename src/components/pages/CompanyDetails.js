@@ -3,7 +3,7 @@ import { useApp } from "../../context/AppContext";
 import PositionModal from "../modals/PositionModal";
 import ModalBackdrop from "../modals/ModalBackdrop";
 
-const CompanyDetails = ({ companyId, onBack }) => {
+const CompanyDetails = ({ companyId, onBack, viewConnection }) => {
   const { darkMode, companies, positions, connections, deletePosition } =
     useApp();
   const [company, setCompany] = useState(null);
@@ -190,7 +190,17 @@ const CompanyDetails = ({ companyId, onBack }) => {
                   <div className="card-header">
                     <h5 className="mb-0">
                       <i className="bi bi-person-circle me-2"></i>
-                      {connection.name}
+                      <a
+                        href="#"
+                        className={darkMode ? "text-light" : "text-dark"}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          viewConnection(connection._id);
+                        }}
+                        style={{ textDecoration: "none", cursor: "pointer" }}
+                      >
+                        {connection.name}
+                      </a>
                       {positions.some((p) => p.current) && (
                         <span className="badge bg-success ms-2">
                           Currently employed

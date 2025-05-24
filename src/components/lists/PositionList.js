@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
-const PositionList = ({ openPositionModal, setEditPosition }) => {
+const PositionList = ({
+  openPositionModal,
+  setEditPosition,
+  viewConnection,
+  viewCompany,
+}) => {
   const { darkMode, positions, deletePosition } = useApp();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -68,8 +73,32 @@ const PositionList = ({ openPositionModal, setEditPosition }) => {
                 {positions.length > 0 ? (
                   positions.map((position) => (
                     <tr key={position._id}>
-                      <td>{position.connectionId.name}</td>
-                      <td>{position.companyId.name}</td>
+                      <td>
+                        <a
+                          href="#"
+                          className={darkMode ? "text-light" : "text-dark"}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            viewConnection(position.connectionId._id);
+                          }}
+                          style={{ textDecoration: "none", cursor: "pointer" }}
+                        >
+                          {position.connectionId.name}
+                        </a>
+                      </td>
+                      <td>
+                        <a
+                          href="#"
+                          className={darkMode ? "text-light" : "text-dark"}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            viewCompany(position.companyId._id);
+                          }}
+                          style={{ textDecoration: "none", cursor: "pointer" }}
+                        >
+                          {position.companyId.name}
+                        </a>
+                      </td>
                       <td>{position.title}</td>
                       <td>{formatDate(position.startDate)}</td>
                       <td>
