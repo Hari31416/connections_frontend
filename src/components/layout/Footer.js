@@ -1,19 +1,14 @@
-import React from 'react';
-import { useApp } from '../../context/AppContext';
+import React from "react";
+import { useApp } from "../../context/AppContext";
 
 const Footer = () => {
-  const { darkMode, logout } = useApp();
-  
+  const { darkMode } = useApp();
+
   return (
-    <footer className="text-center mt-5 pt-4 border-top">
-      <button
-        className={`btn btn-lg ${
-          darkMode ? "btn-outline-light" : "btn-outline-primary"
-        }`}
-        onClick={logout}
-      >
-        Logout
-      </button>
+    <footer className="text-center py-3 mt-auto border-top">
+      <p className="text-muted mb-0">
+        &copy; {new Date().getFullYear()} My CRM Dashboard
+      </p>
     </footer>
   );
 };

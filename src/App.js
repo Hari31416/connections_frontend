@@ -30,18 +30,18 @@ const MainApp = () => {
   // Main App View
   return (
     <div
-      className={`min-vh-100 py-5 ${
+      className={`d-flex flex-column min-vh-100 ${
         darkMode ? "bg-dark text-light" : "bg-light text-dark"
       }`}
     >
       <div
-        className="container-fluid"
+        className="container-fluid d-flex flex-column flex-grow-1"
         style={{ maxWidth: 1140, padding: "0 15px" }}
       >
         <Header />
 
-        <main>
-          <div className="row g-4">
+        <main className="flex-grow-1 d-flex flex-column">
+          <div className="row g-4 flex-grow-1">
             <ConnectionList openConnectionModal={openConnectionModal} />
             <CompanyList openCompanyModal={openCompanyModal} />
           </div>

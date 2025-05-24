@@ -1,18 +1,26 @@
-import React from 'react';
-import { useApp } from '../../context/AppContext';
+import React from "react";
+import { useApp } from "../../context/AppContext";
 
 const Header = () => {
-  const { darkMode, toggleDarkMode } = useApp();
-  
+  const { darkMode, toggleDarkMode, logout } = useApp();
+
   return (
-    <header className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-      <h1 className="h3 mb-0">My CRM Dashboard</h1>
-      <button
-        className="btn btn-primary btn-sm"
-        onClick={toggleDarkMode}
-      >
-        {darkMode ? "Light Mode" : "Dark Mode"}
-      </button>
+    <header className="navbar navbar-expand-lg mb-4 pb-3 border-bottom">
+      <div className="container-fluid px-0">
+        <h1 className="navbar-brand h3 mb-0">My CRM Dashboard</h1>
+        <div className="d-flex align-items-center gap-2">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={toggleDarkMode}
+          >
+            {darkMode ? "Light Mode" : "Dark Mode"}
+          </button>
+          <button className="btn btn-danger btn-sm" onClick={logout}>
+            <i className="bi bi-box-arrow-right me-1"></i>
+            Logout
+          </button>
+        </div>
+      </div>
     </header>
   );
 };
