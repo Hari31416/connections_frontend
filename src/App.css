@@ -181,6 +181,19 @@ body, html {
   border-color: var(--dark-secondary) !important;
 }
 
+/* Table dark mode styling */
+.bg-dark .table-dark {
+  background-color: var(--dark-card) !important;
+  color: var(--text-light) !important;
+}
+
+.bg-dark .table-dark th,
+.bg-dark .table-dark td,
+.bg-dark .table-dark thead th {
+  border-color: var(--dark-secondary) !important;
+  background-color: var(--dark-card) !important;
+}
+
 /* Improved responsive spacing */
 .mb-4 {
   margin-bottom: var(--spacing-lg) !important;

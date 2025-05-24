@@ -205,7 +205,7 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                             <div className="table-responsive">
                               <table
                                 className={`table table-sm ${
-                                  darkMode ? "table table-dark" : "table-light"
+                                  darkMode ? "table-dark" : "table-light"
                                 }`}
                               >
                                 <thead>
