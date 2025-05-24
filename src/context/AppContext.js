@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from "react";
 
 const API = "http://localhost:4000/api";
 
@@ -86,6 +86,60 @@ export const AppProvider = ({ children }) => {
       });
   };
 
+  // Add updateConnection function to edit existing connections
+  const updateConnection = (updatedConn) => {
+    return fetch(`${API}/connections/${updatedConn.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({
+        name: updatedConn.name,
+        email: updatedConn.email,
+        phone: updatedConn.phone,
+        companies: updatedConn.companies,
+        notes: updatedConn.notes,
+      }),
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to update connection");
+        return r.json();
+      })
+      .then((conn) => {
+        // Update the connections state with the updated connection
+        setConnections(connections.map((c) => (c._id === conn._id ? conn : c)));
+        return true;
+      })
+      .catch((error) => {
+        console.error("Error updating connection:", error);
+        return false;
+      });
+  };
+
+  // Add function to delete a connection
+  const deleteConnection = (connectionId) => {
+    return fetch(`${API}/connections/${connectionId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to delete connection");
+        return r.json();
+      })
+      .then(() => {
+        // Remove the deleted connection from state
+        setConnections(connections.filter((c) => c._id !== connectionId));
+        return true;
+      })
+      .catch((error) => {
+        console.error("Error deleting connection:", error);
+        return false;
+      });
+  };
+
   const addCompany = (newComp) => {
     return fetch(API + "/companies", {
       method: "POST",
@@ -105,6 +159,59 @@ export const AppProvider = ({ children }) => {
       })
       .catch((error) => {
         console.error("Error adding company:", error);
+        return false;
+      });
+  };
+
+  // Add updateCompany function to edit existing companies
+  const updateCompany = (updatedComp) => {
+    return fetch(`${API}/companies/${updatedComp.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({
+        name: updatedComp.name,
+        industry: updatedComp.industry,
+        website: updatedComp.website,
+        connections: updatedComp.connections,
+      }),
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to update company");
+        return r.json();
+      })
+      .then((comp) => {
+        // Update the companies state with the updated company
+        setCompanies(companies.map((c) => (c._id === comp._id ? comp : c)));
+        return true;
+      })
+      .catch((error) => {
+        console.error("Error updating company:", error);
+        return false;
+      });
+  };
+
+  // Add function to delete a company
+  const deleteCompany = (companyId) => {
+    return fetch(`${API}/companies/${companyId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to delete company");
+        return r.json();
+      })
+      .then(() => {
+        // Remove the deleted company from state
+        setCompanies(companies.filter((c) => c._id !== companyId));
+        return true;
+      })
+      .catch((error) => {
+        console.error("Error deleting company:", error);
         return false;
       });
   };
@@ -133,7 +240,11 @@ export const AppProvider = ({ children }) => {
         setView,
         handleAuth,
         addConnection,
+        updateConnection,
+        deleteConnection,
         addCompany,
+        updateCompany,
+        deleteCompany,
         logout,
         toggleDarkMode,
       }}
