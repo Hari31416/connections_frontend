@@ -13,6 +13,21 @@ export const AppProvider = ({ children }) => {
   const [companies, setCompanies] = useState([]);
   const [view, setView] = useState("login");
 
+  // Function to refresh companies data
+  const refreshCompanies = () => {
+    if (token) {
+      fetch(API + "/companies", {
+        headers: { Authorization: "Bearer " + token },
+      })
+        .then((r) => {
+          if (!r.ok) throw new Error("Failed to fetch companies");
+          return r.json();
+        })
+        .then(setCompanies)
+        .catch((error) => console.error("Error fetching companies:", error));
+    }
+  };
+
   useEffect(() => {
     if (token) {
       // Fetch connections
@@ -78,6 +93,10 @@ export const AppProvider = ({ children }) => {
       })
       .then((conn) => {
         setConnections([...connections, conn]);
+
+        // Refresh companies data to update connections
+        refreshCompanies();
+
         return true;
       })
       .catch((error) => {
@@ -109,6 +128,10 @@ export const AppProvider = ({ children }) => {
       .then((conn) => {
         // Update the connections state with the updated connection
         setConnections(connections.map((c) => (c._id === conn._id ? conn : c)));
+
+        // Refresh companies data to update connections
+        refreshCompanies();
+
         return true;
       })
       .catch((error) => {
@@ -132,6 +155,10 @@ export const AppProvider = ({ children }) => {
       .then(() => {
         // Remove the deleted connection from state
         setConnections(connections.filter((c) => c._id !== connectionId));
+
+        // Refresh companies data to update connections
+        refreshCompanies();
+
         return true;
       })
       .catch((error) => {

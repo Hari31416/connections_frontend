@@ -113,7 +113,10 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
             ></button>
           </div>
           <form onSubmit={handleSubmit}>
-            <div className="modal-body">
+            <div
+              className="modal-body"
+              style={{ maxHeight: "70vh", overflowY: "auto" }}
+            >
               <div className="mb-3">
                 <label htmlFor="connectionName" className="form-label">
                   Name

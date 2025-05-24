@@ -1,8 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
 
 const CompanyList = ({ openCompanyModal }) => {
-  const { darkMode, companies } = useApp();
+  const { darkMode, companies, deleteCompany } = useApp();
+  const [expandedCompany, setExpandedCompany] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const toggleExpand = (companyId) => {
+    if (expandedCompany === companyId) {
+      setExpandedCompany(null);
+    } else {
+      setExpandedCompany(companyId);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleDeleteCompany = async (companyId, companyName) => {
+    if (window.confirm(`Are you sure you want to delete ${companyName}?`)) {
+      setIsDeleting(true);
+      const success = await deleteCompany(companyId);
+      if (success) {
+        // If the deleted company was expanded, collapse it
+        if (expandedCompany === companyId) {
+          setExpandedCompany(null);
+        }
+      }
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="col-12">
@@ -20,45 +49,123 @@ const CompanyList = ({ openCompanyModal }) => {
         <div
           className={darkMode ? "card-body bg-dark text-light" : "card-body"}
         >
-          <ul className={`list-group ${darkMode ? "list-group-flush" : ""}`}>
+          <div className="list-group">
             {companies.length > 0 ? (
               companies.map((c) => (
-                <li
-                  key={c._id}
-                  className={`list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center ${
-                    darkMode ? "bg-dark text-light border-secondary" : ""
-                  }`}
-                >
-                  <div>
-                    <strong>{c.name}</strong>{" "}
-                    <span>({c.industry || "N/A"})</span>
+                <React.Fragment key={c._id}>
+                  <div
+                    className={`list-group-item d-flex justify-content-between align-items-center ${
+                      darkMode ? "bg-dark text-light border-secondary" : ""
+                    }`}
+                  >
+                    <div className="d-flex align-items-center">
+                      <button
+                        className="btn btn-sm btn-outline-secondary me-3"
+                        onClick={() => toggleExpand(c._id)}
+                      >
+                        <i
+                          className={`bi bi-chevron-${
+                            expandedCompany === c._id ? "up" : "down"
+                          }`}
+                        ></i>
+                      </button>
+                      <div>
+                        <strong>{c.name}</strong>{" "}
+                        <span className="text-muted">
+                          ({c.industry || "N/A"})
+                        </span>
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      {c.connections && (
+                        <span className="badge bg-info me-3">
+                          {c.connections.length}{" "}
+                          {c.connections.length === 1
+                            ? "connection"
+                            : "connections"}
+                        </span>
+                      )}
+                      {c.website && (
+                        <a
+                          href={
+                            c.website.startsWith("http")
+                              ? c.website
+                              : `https://${c.website}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-primary btn-sm"
+                        >
+                          Visit Website
+                        </a>
+                      )}
+                      <button
+                        className="btn btn-sm btn-danger ms-2"
+                        onClick={() => handleDeleteCompany(c._id, c.name)}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? (
+                          <span className="spinner-border spinner-border-sm" />
+                        ) : (
+                          <i className="bi bi-trash"></i>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                  {c.website && (
-                    <a
-                      href={
-                        c.website.startsWith("http")
-                          ? c.website
-                          : `https://${c.website}`
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-primary btn-sm mt-2 mt-md-0"
+
+                  {expandedCompany === c._id && c.connections && (
+                    <div
+                      className={`list-group-item ${
+                        darkMode
+                          ? "bg-dark text-light border-secondary"
+                          : "bg-light"
+                      }`}
                     >
-                      Visit Website
-                    </a>
+                      <div className="p-2">
+                        <h6>Associated Connections:</h6>
+                        {c.connections.length > 0 ? (
+                          <div className="table-responsive">
+                            <table
+                              className={`table table-sm ${
+                                darkMode ? "table-dark" : "table-light"
+                              }`}
+                            >
+                              <thead>
+                                <tr>
+                                  <th>Name</th>
+                                  <th>Position</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {c.connections.map((connection, idx) => (
+                                  <tr key={idx}>
+                                    <td>{connection.connectionName}</td>
+                                    <td>{connection.position || "-"}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <p className="text-muted">
+                            No connections associated with this company.
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   )}
-                </li>
+                </React.Fragment>
               ))
             ) : (
-              <li
+              <div
                 className={`list-group-item text-center py-3 ${
                   darkMode ? "bg-dark text-light border-secondary" : ""
                 }`}
               >
                 No companies added yet.
-              </li>
+              </div>
             )}
-          </ul>
+          </div>
         </div>
       </div>
     </div>

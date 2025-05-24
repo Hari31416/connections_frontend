@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import React, { useState } from "react";
+import { useApp } from "../../context/AppContext";
 
 const CompanyModal = ({ showModal, closeModal }) => {
   const { darkMode, addCompany } = useApp();
@@ -42,7 +42,10 @@ const CompanyModal = ({ showModal, closeModal }) => {
             ></button>
           </div>
           <form onSubmit={handleSubmit}>
-            <div className="modal-body">
+            <div
+              className="modal-body"
+              style={{ maxHeight: "70vh", overflowY: "auto" }}
+            >
               <div className="mb-3">
                 <label htmlFor="companyName" className="form-label">
                   Company Name
@@ -104,10 +107,7 @@ const CompanyModal = ({ showModal, closeModal }) => {
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-              >
+              <button type="submit" className="btn btn-primary">
                 Save Company
               </button>
             </div>
