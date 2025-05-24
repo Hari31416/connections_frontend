@@ -5,9 +5,15 @@ const Header = () => {
   const { darkMode, toggleDarkMode, logout } = useApp();
 
   return (
-    <header className="navbar navbar-expand-lg mb-4 pb-3 border-bottom">
+    <header className="navbar navbar-expand-lg mb-4 pb-3">
       <div className="container-fluid px-0">
-        <h1 className="navbar-brand h3 mb-0">My CRM Dashboard</h1>
+        <h1
+          className={`navbar-brand h3 mb-0 pt-4 ${
+            darkMode ? "text-light" : "text-dark"
+          }`}
+        >
+          My CRM Dashboard
+        </h1>
         <div className="d-flex align-items-center gap-2">
           <button
             className="btn btn-outline-primary btn-sm"
