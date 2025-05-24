@@ -116,7 +116,7 @@ function App() {
       >
         <div
           className={`card p-4 shadow-lg ${
-            darkMode ? "bg-secondary text-light border-dark" : "bg-white"
+            darkMode ? "bg-dark text-light border-dark" : "bg-white"
           }`}
           style={{ maxWidth: 450, width: "100%" }}
         >
@@ -179,7 +179,7 @@ function App() {
           <div className="text-center">
             <a
               href="#"
-              className={darkMode ? "text-info" : "text-primary"}
+              className="text-primary"
               onClick={(e) => {
                 e.preventDefault(); // Prevent default link behavior
                 setView(view === "login" ? "register" : "login");
@@ -202,14 +202,15 @@ function App() {
         darkMode ? "bg-dark text-light" : "bg-light text-dark"
       }`}
     >
-      <div className="container" style={{ maxWidth: 960 }}>
+      <div
+        className="container-fluid"
+        style={{ maxWidth: 1140, padding: "0 15px" }}
+      >
         {/* Header and Dark Mode Toggle */}
         <header className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
           <h1 className="h3 mb-0">My CRM Dashboard</h1>
           <button
-            className={`btn btn-sm ${
-              darkMode ? "btn-outline-primary" : "btn-primary"
-            }`}
+            className="btn btn-primary btn-sm"
             onClick={() => setDarkMode((d) => !d)}
           >
             {darkMode ? "Light Mode" : "Dark Mode"}
@@ -222,32 +223,24 @@ function App() {
             <div className="col-lg-6">
               <div
                 className={`card shadow-sm h-100 ${
-                  darkMode ? "bg-secondary border-dark" : "border-light"
+                  darkMode ? "bg-dark border-dark" : "border-light"
                 }`}
               >
-                <div
-                  className={`card-header ${
-                    darkMode ? "bg-dark text-light" : "bg-primary text-white"
-                  }`}
-                >
+                <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">Your Connections</h5>
                 </div>
                 <div
-                  className={`card-body ${
-                    darkMode ? "bg-secondary text-light" : ""
-                  }`}
+                  className={
+                    darkMode ? "card-body bg-dark text-light" : "card-body"
+                  }
                 >
                   <div className="table-responsive mb-4">
                     <table
                       className={`table table-hover align-middle mb-0 ${
-                        darkMode ? "table-dark" : "table-light"
+                        darkMode ? "table-dark" : ""
                       }`}
                     >
-                      <thead
-                        className={`${
-                          darkMode ? "table-dark" : "table-primary"
-                        }`}
-                      >
+                      <thead className={darkMode ? "" : "table-light"}>
                         <tr>
                           <th>Name</th>
                           <th>Email</th>
@@ -334,20 +327,16 @@ function App() {
             <div className="col-lg-6">
               <div
                 className={`card shadow-sm h-100 ${
-                  darkMode ? "bg-secondary border-dark" : "border-light"
+                  darkMode ? "bg-dark border-dark" : "border-light"
                 }`}
               >
-                <div
-                  className={`card-header ${
-                    darkMode ? "bg-dark text-light" : "bg-primary text-white"
-                  }`}
-                >
+                <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">Your Companies</h5>
                 </div>
                 <div
-                  className={`card-body ${
-                    darkMode ? "bg-secondary text-light" : ""
-                  }`}
+                  className={
+                    darkMode ? "card-body bg-dark text-light" : "card-body"
+                  }
                 >
                   <ul
                     className={`list-group mb-4 ${
@@ -379,9 +368,7 @@ function App() {
                               }
                               target="_blank"
                               rel="noopener noreferrer"
-                              className={`btn btn-sm mt-2 mt-md-0 ${
-                                darkMode ? "btn-outline-info" : "btn-info"
-                              }`}
+                              className="btn btn-primary btn-sm mt-2 mt-md-0"
                             >
                               Visit Website
                             </a>
@@ -457,7 +444,7 @@ function App() {
         <footer className="text-center mt-5 pt-4 border-top">
           <button
             className={`btn btn-lg ${
-              darkMode ? "btn-outline-light" : "btn-outline-danger"
+              darkMode ? "btn-outline-light" : "btn-outline-primary"
             }`}
             onClick={() => {
               setToken("");

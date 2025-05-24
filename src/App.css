@@ -1,3 +1,15 @@
+/* Main color variables */
+:root {
+  --primary-color: #3498db;
+  --primary-hover: #2980b9;
+  --secondary-color: #f8f9fa;
+  --text-color: #333;
+  --text-light: #f8f9fa;
+  --border-color: #dee2e6;
+  --dark-bg: #212529;
+  --dark-card: #343a40;
+}
+
 .App {
   text-align: center;
 }
@@ -34,5 +46,85 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Override Bootstrap's primary color */
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+/* Container adjustments */
+.container-fluid {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+
+/* Dark mode overrides */
+.bg-dark {
+  background-color: var(--dark-bg) !important;
+}
+
+.bg-dark .card {
+  background-color: var(--dark-card);
+}
+
+.bg-dark .border-dark {
+  border-color: #495057 !important;
+}
+
+/* Form control focus states */
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+/* Card header styling */
+.card-header {
+  border-bottom: none;
+}
+
+/* Table adjustments */
+.table-hover tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* List group styling */
+.list-group-item {
+  border-left: none;
+  border-right: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
   }
 }
