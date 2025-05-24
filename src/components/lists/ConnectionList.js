@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
-const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
+const ConnectionList = ({
+  openConnectionModal,
+  setEditConnection,
+  viewConnection,
+}) => {
   const { darkMode, connections, deleteConnection, positions } = useApp();
   const [expandedConnection, setExpandedConnection] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -101,7 +105,22 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                           </button>
                           <div>
                             <div className="fw-bold mb-1">
-                              {connection.name}
+                              <a
+                                href="#"
+                                className={
+                                  darkMode ? "text-light" : "text-dark"
+                                }
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  viewConnection(connection._id);
+                                }}
+                                style={{
+                                  textDecoration: "none",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                {connection.name}
+                              </a>
                             </div>
                             {connectionPositions.length > 0 &&
                               connectionPositions.some((p) => p.current) && (
@@ -127,13 +146,27 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                               {connection.email && (
                                 <div className="mb-1">
                                   <i className="bi bi-envelope me-1"></i>
-                                  {connection.email}
+                                  <a
+                                    href={`mailto:${connection.email}`}
+                                    className={
+                                      darkMode ? "text-light-50" : "text-muted"
+                                    }
+                                  >
+                                    {connection.email}
+                                  </a>
                                 </div>
                               )}
                               {connection.phone && (
                                 <div>
                                   <i className="bi bi-telephone me-1"></i>
-                                  {connection.phone}
+                                  <a
+                                    href={`tel:${connection.phone}`}
+                                    className={
+                                      darkMode ? "text-light-50" : "text-muted"
+                                    }
+                                  >
+                                    {connection.phone}
+                                  </a>
                                 </div>
                               )}
                             </div>
@@ -147,6 +180,13 @@ const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
                               : "positions"}
                           </span>
                           <div className="btn-group btn-group-sm">
+                            <button
+                              className="btn btn-outline-info"
+                              onClick={() => viewConnection(connection._id)}
+                              aria-label="View Details"
+                            >
+                              <i className="bi bi-eye"></i>
+                            </button>
                             <button
                               className="btn btn-outline-primary"
                               onClick={() => handleEditConnection(connection)}

@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
-const PositionModal = ({ showModal, closeModal, editPosition = null }) => {
+const PositionModal = ({
+  showModal,
+  closeModal,
+  editPosition = null,
+  preselectedConnectionId = null,
+}) => {
   const { darkMode, companies, connections, addPosition, updatePosition } =
     useApp();
 
@@ -35,7 +40,7 @@ const PositionModal = ({ showModal, closeModal, editPosition = null }) => {
     } else {
       // Reset form when adding a new position
       setNewPos({
-        connectionId: "",
+        connectionId: preselectedConnectionId || "",
         companyId: "",
         title: "",
         startDate: "",
@@ -44,7 +49,7 @@ const PositionModal = ({ showModal, closeModal, editPosition = null }) => {
         notes: "",
       });
     }
-  }, [editPosition, showModal]);
+  }, [editPosition, showModal, preselectedConnectionId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,7 +120,7 @@ const PositionModal = ({ showModal, closeModal, editPosition = null }) => {
                     setNewPos({ ...newPos, connectionId: e.target.value })
                   }
                   required
-                  disabled={editPosition} // Disable when editing existing position
+                  disabled={editPosition || preselectedConnectionId} // Disable when editing existing position or preselected
                 >
                   <option value="">Select a connection</option>
                   {connections.map((connection) => (

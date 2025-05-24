@@ -11,6 +11,7 @@ import ConnectionModal from "./components/modals/ConnectionModal";
 import CompanyModal from "./components/modals/CompanyModal";
 import PositionModal from "./components/modals/PositionModal";
 import ModalBackdrop from "./components/modals/ModalBackdrop";
+import ConnectionDetails from "./components/pages/ConnectionDetails";
 
 const MainApp = () => {
   const { darkMode, token } = useApp();
@@ -20,6 +21,7 @@ const MainApp = () => {
   const [editConnection, setEditConnection] = useState(null);
   const [editCompany, setEditCompany] = useState(null);
   const [editPosition, setEditPosition] = useState(null);
+  const [viewConnectionId, setViewConnectionId] = useState(null);
 
   // Apply dark mode class to body element
   useEffect(() => {
@@ -40,9 +42,48 @@ const MainApp = () => {
   const openPositionModal = () => setShowPositionModal(true);
   const closePositionModal = () => setShowPositionModal(false);
 
+  // Function to view connection details
+  const viewConnection = (connectionId) => {
+    setViewConnectionId(connectionId);
+  };
+
+  // Function to go back to main view
+  const backToMain = () => {
+    setViewConnectionId(null);
+  };
+
   // If not logged in, show Auth component
   if (!token) {
     return <Auth />;
+  }
+
+  // Connection Details View
+  if (viewConnectionId) {
+    return (
+      <div
+        className={`d-flex flex-column min-vh-100 ${
+          darkMode ? "bg-dark text-light" : "bg-light text-dark"
+        }`}
+      >
+        <div
+          className="container-fluid d-flex flex-column flex-grow-1"
+          style={{ maxWidth: 1140, padding: "0 15px" }}
+        >
+          <Header />
+
+          <main className="flex-grow-1 d-flex flex-column">
+            <div className="row mb-4">
+              <ConnectionDetails
+                connectionId={viewConnectionId}
+                onBack={backToMain}
+              />
+            </div>
+          </main>
+
+          <Footer />
+        </div>
+      </div>
+    );
   }
 
   // Main App View
@@ -63,6 +104,7 @@ const MainApp = () => {
             <ConnectionList
               openConnectionModal={openConnectionModal}
               setEditConnection={setEditConnection}
+              viewConnection={viewConnection}
             />
           </div>
           <div className="row mb-4">
