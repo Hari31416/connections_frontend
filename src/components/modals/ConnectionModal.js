@@ -2,18 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
 const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
-  const { darkMode, addConnection, updateConnection, companies } = useApp();
+  const { darkMode, addConnection, updateConnection, positions } = useApp();
   const [newConn, setNewConn] = useState({
     name: "",
     email: "",
     phone: "",
     notes: "",
-    companies: [],
   });
-  const [selectedCompany, setSelectedCompany] = useState("");
-  const [position, setPosition] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   // If editing an existing connection, populate the form
   useEffect(() => {
@@ -24,7 +19,6 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
         email: editConnection.email || "",
         phone: editConnection.phone || "",
         notes: editConnection.notes || "",
-        companies: editConnection.companies || [],
       });
     } else {
       // Reset form when adding a new connection
@@ -33,7 +27,6 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
         email: "",
         phone: "",
         notes: "",
-        companies: [],
       });
     }
   }, [editConnection, showModal]);
@@ -53,39 +46,18 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
     }
   };
 
-  const addCompanyToConnection = () => {
-    if (!selectedCompany) return;
+  // Get positions for this connection
+  const getConnectionPositions = () => {
+    if (!editConnection) return [];
 
-    const company = companies.find((c) => c._id === selectedCompany);
-    if (!company) return;
-
-    // Create new company entry
-    const companyEntry = {
-      companyId: company._id,
-      companyName: company.name,
-      position: position,
-      startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined,
-    };
-
-    // Add to companies array
-    setNewConn({
-      ...newConn,
-      companies: [...newConn.companies, companyEntry],
-    });
-
-    // Reset form fields
-    setSelectedCompany("");
-    setPosition("");
-    setStartDate("");
-    setEndDate("");
+    return positions.filter(
+      (position) => position.connectionId._id === editConnection._id
+    );
   };
 
-  const removeCompanyFromConnection = (companyId) => {
-    setNewConn({
-      ...newConn,
-      companies: newConn.companies.filter((c) => c.companyId !== companyId),
-    });
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString();
   };
 
   return (
@@ -170,155 +142,53 @@ const ConnectionModal = ({ showModal, closeModal, editConnection = null }) => {
                 />
               </div>
 
-              {/* Company Associations Section */}
-              <div className="mb-4 mt-4">
-                <h6 className="border-bottom pb-2">Company Associations</h6>
+              {/* Show company positions when editing */}
+              {editConnection && (
+                <div className="mb-4 mt-4">
+                  <h6 className="border-bottom pb-2">Company Positions</h6>
+                  <div className="alert alert-info">
+                    <i className="bi bi-info-circle me-2"></i>
+                    To add or manage positions, use the Positions tab after
+                    saving this connection.
+                  </div>
 
-                {/* List of associated companies */}
-                {newConn.companies && newConn.companies.length > 0 ? (
-                  <div className="mb-3">
-                    <table className={`table ${darkMode ? "table-dark" : ""}`}>
-                      <thead>
-                        <tr>
-                          <th>Company</th>
-                          <th>Position</th>
-                          <th>Start Date</th>
-                          <th>End Date</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {newConn.companies.map((company, index) => (
-                          <tr key={index}>
-                            <td>{company.companyName}</td>
-                            <td>{company.position}</td>
-                            <td>
-                              {company.startDate
-                                ? new Date(
-                                    company.startDate
-                                  ).toLocaleDateString()
-                                : "-"}
-                            </td>
-                            <td>
-                              {company.endDate
-                                ? new Date(company.endDate).toLocaleDateString()
-                                : "-"}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-danger"
-                                onClick={() =>
-                                  removeCompanyFromConnection(company.companyId)
-                                }
-                              >
-                                Remove
-                              </button>
-                            </td>
+                  {/* List of associated positions */}
+                  {getConnectionPositions().length > 0 ? (
+                    <div className="table-responsive">
+                      <table
+                        className={`table ${darkMode ? "table-dark" : ""}`}
+                      >
+                        <thead>
+                          <tr>
+                            <th>Company</th>
+                            <th>Title</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="text-muted mb-3">
-                    No companies associated with this connection yet.
-                  </div>
-                )}
-
-                {/* Add company form */}
-                <div className="card mb-3">
-                  <div
-                    className={`card-header ${darkMode ? "bg-secondary" : ""}`}
-                  >
-                    Add Company Association
-                  </div>
-                  <div className={`card-body ${darkMode ? "bg-dark" : ""}`}>
-                    <div className="row mb-2">
-                      <div className="col-md-6">
-                        <label htmlFor="companySelect" className="form-label">
-                          Company
-                        </label>
-                        <select
-                          id="companySelect"
-                          className={`form-select ${
-                            darkMode
-                              ? "bg-dark text-light border-secondary"
-                              : ""
-                          }`}
-                          value={selectedCompany}
-                          onChange={(e) => setSelectedCompany(e.target.value)}
-                        >
-                          <option value="">Select a company</option>
-                          {companies.map((company) => (
-                            <option key={company._id} value={company._id}>
-                              {company.name}
-                            </option>
+                        </thead>
+                        <tbody>
+                          {getConnectionPositions().map((position) => (
+                            <tr key={position._id}>
+                              <td>{position.companyId.name}</td>
+                              <td>{position.title}</td>
+                              <td>{formatDate(position.startDate)}</td>
+                              <td>
+                                {position.current
+                                  ? "Current"
+                                  : formatDate(position.endDate)}
+                              </td>
+                            </tr>
                           ))}
-                        </select>
-                      </div>
-                      <div className="col-md-6">
-                        <label htmlFor="positionInput" className="form-label">
-                          Position
-                        </label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            darkMode
-                              ? "bg-dark text-light border-secondary"
-                              : ""
-                          }`}
-                          id="positionInput"
-                          placeholder="e.g. Software Engineer"
-                          value={position}
-                          onChange={(e) => setPosition(e.target.value)}
-                        />
-                      </div>
+                        </tbody>
+                      </table>
                     </div>
-                    <div className="row mb-3">
-                      <div className="col-md-6">
-                        <label htmlFor="startDateInput" className="form-label">
-                          Start Date
-                        </label>
-                        <input
-                          type="date"
-                          className={`form-control ${
-                            darkMode
-                              ? "bg-dark text-light border-secondary"
-                              : ""
-                          }`}
-                          id="startDateInput"
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <label htmlFor="endDateInput" className="form-label">
-                          End Date
-                        </label>
-                        <input
-                          type="date"
-                          className={`form-control ${
-                            darkMode
-                              ? "bg-dark text-light border-secondary"
-                              : ""
-                          }`}
-                          id="endDateInput"
-                          value={endDate}
-                          onChange={(e) => setEndDate(e.target.value)}
-                        />
-                      </div>
+                  ) : (
+                    <div className="text-muted mb-3">
+                      No positions associated with this connection yet.
                     </div>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-primary"
-                      onClick={addCompanyToConnection}
-                    >
-                      Add Company
-                    </button>
-                  </div>
+                  )}
                 </div>
-              </div>
+              )}
 
               <div className="mb-3">
                 <label htmlFor="connectionNotes" className="form-label">

@@ -1,19 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
-const ConnectionList = ({ openConnectionModal }) => {
-  const { darkMode, connections, deleteConnection } = useApp();
+const ConnectionList = ({ openConnectionModal, setEditConnection }) => {
+  const { darkMode, connections, deleteConnection, positions } = useApp();
   const [expandedConnection, setExpandedConnection] = useState(null);
-
-  const handleEdit = (connection) => {
-    openConnectionModal(connection);
-  };
-
-  const handleDelete = async (connectionId) => {
-    if (window.confirm("Are you sure you want to delete this connection?")) {
-      await deleteConnection(connectionId);
-    }
-  };
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const toggleExpand = (connectionId) => {
     if (expandedConnection === connectionId) {
@@ -28,6 +19,32 @@ const ConnectionList = ({ openConnectionModal }) => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const handleEditConnection = (connection) => {
+    setEditConnection(connection);
+    openConnectionModal();
+  };
+
+  const handleDeleteConnection = async (connectionId, name) => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+      setIsDeleting(true);
+      const success = await deleteConnection(connectionId);
+      if (success) {
+        // If the deleted connection was expanded, collapse it
+        if (expandedConnection === connectionId) {
+          setExpandedConnection(null);
+        }
+      }
+      setIsDeleting(false);
+    }
+  };
+
+  // Get positions for a specific connection
+  const getConnectionPositions = (connectionId) => {
+    return positions.filter(
+      (position) => position.connectionId._id === connectionId
+    );
+  };
+
   return (
     <div className="col-12">
       <div
@@ -39,7 +56,10 @@ const ConnectionList = ({ openConnectionModal }) => {
           <h5 className="mb-0">Your Connections</h5>
           <button
             className="btn btn-sm btn-light"
-            onClick={() => openConnectionModal()}
+            onClick={() => {
+              setEditConnection(null);
+              openConnectionModal();
+            }}
           >
             <i className="bi bi-plus-lg"></i> Add New
           </button>
@@ -47,132 +67,164 @@ const ConnectionList = ({ openConnectionModal }) => {
         <div
           className={darkMode ? "card-body bg-dark text-light" : "card-body"}
         >
-          <div className="table-responsive">
-            <table
-              className={`table table-hover align-middle mb-0 ${
-                darkMode ? "table-dark" : ""
-              }`}
-            >
-              <thead className={darkMode ? "" : "table-light"}>
-                <tr>
-                  <th style={{ width: "40px" }}></th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Companies</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {connections.length > 0 ? (
-                  connections.map((c) => (
-                    <React.Fragment key={c._id}>
-                      <tr>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-outline-secondary"
-                            onClick={() => toggleExpand(c._id)}
-                          >
-                            <i
-                              className={`bi bi-chevron-${
-                                expandedConnection === c._id ? "up" : "down"
-                              }`}
-                            ></i>
-                          </button>
-                        </td>
-                        <td>{c.name}</td>
-                        <td>{c.email || "-"}</td>
-                        <td>{c.phone || "-"}</td>
-                        <td>
-                          {c.companies && c.companies.length > 0
-                            ? `${c.companies.length} ${
-                                c.companies.length === 1
-                                  ? "company"
-                                  : "companies"
-                              }`
-                            : "None"}
-                        </td>
-                        <td>
-                          <div className="btn-group btn-group-sm">
-                            <button
-                              className="btn btn-outline-primary"
-                              onClick={() => handleEdit(c)}
-                            >
-                              <i className="bi bi-pencil"></i>
-                            </button>
-                            <button
-                              className="btn btn-outline-danger"
-                              onClick={() => handleDelete(c._id)}
-                            >
-                              <i className="bi bi-trash"></i>
-                            </button>
+          <div className="list-group">
+            {connections.length > 0 ? (
+              connections.map((connection) => {
+                const connectionPositions = getConnectionPositions(
+                  connection._id
+                );
+                return (
+                  <React.Fragment key={connection._id}>
+                    <div
+                      className={`list-group-item d-flex justify-content-between align-items-center ${
+                        darkMode ? "bg-dark text-light border-secondary" : ""
+                      }`}
+                    >
+                      <div className="d-flex align-items-center">
+                        <button
+                          className="btn btn-sm btn-outline-secondary me-3"
+                          onClick={() => toggleExpand(connection._id)}
+                        >
+                          <i
+                            className={`bi bi-chevron-${
+                              expandedConnection === connection._id
+                                ? "up"
+                                : "down"
+                            }`}
+                          ></i>
+                        </button>
+                        <div>
+                          <strong>{connection.name}</strong>
+                          {connectionPositions.length > 0 &&
+                            connectionPositions.some((p) => p.current) && (
+                              <span className="ms-2 badge bg-success">
+                                {
+                                  connectionPositions.find((p) => p.current)
+                                    ?.title
+                                }{" "}
+                                at{" "}
+                                {
+                                  connectionPositions.find((p) => p.current)
+                                    ?.companyId.name
+                                }
+                              </span>
+                            )}
+                          <div className="small text-muted">
+                            {connection.email && (
+                              <span className="me-3">
+                                <i className="bi bi-envelope me-1"></i>
+                                {connection.email}
+                              </span>
+                            )}
+                            {connection.phone && (
+                              <span>
+                                <i className="bi bi-telephone me-1"></i>
+                                {connection.phone}
+                              </span>
+                            )}
                           </div>
-                        </td>
-                      </tr>
-                      {expandedConnection === c._id && (
-                        <tr>
-                          <td
-                            colSpan="6"
-                            className={darkMode ? "bg-dark" : "bg-light"}
-                          >
-                            <div className="p-3">
-                              {c.notes && (
-                                <div className="mb-3">
-                                  <h6>Notes:</h6>
-                                  <p className="text-muted">{c.notes}</p>
-                                </div>
-                              )}
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <span className="badge bg-info me-3">
+                          {connectionPositions.length}{" "}
+                          {connectionPositions.length === 1
+                            ? "position"
+                            : "positions"}
+                        </span>
+                        <button
+                          className="btn btn-sm btn-primary me-2"
+                          onClick={() => handleEditConnection(connection)}
+                        >
+                          <i className="bi bi-pencil"></i>
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() =>
+                            handleDeleteConnection(
+                              connection._id,
+                              connection.name
+                            )
+                          }
+                          disabled={isDeleting}
+                        >
+                          {isDeleting ? (
+                            <span className="spinner-border spinner-border-sm" />
+                          ) : (
+                            <i className="bi bi-trash"></i>
+                          )}
+                        </button>
+                      </div>
+                    </div>
 
-                              <h6>Companies & Positions:</h6>
-                              {c.companies && c.companies.length > 0 ? (
-                                <div className="table-responsive">
-                                  <table
-                                    className={`table table-sm ${
-                                      darkMode ? "table-dark" : "table-light"
-                                    }`}
-                                  >
-                                    <thead>
-                                      <tr>
-                                        <th>Company</th>
-                                        <th>Position</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {c.companies.map((company, idx) => (
-                                        <tr key={idx}>
-                                          <td>{company.companyName}</td>
-                                          <td>{company.position || "-"}</td>
-                                          <td>
-                                            {formatDate(company.startDate)}
-                                          </td>
-                                          <td>{formatDate(company.endDate)}</td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              ) : (
-                                <p className="text-muted">
-                                  No companies associated with this connection.
-                                </p>
-                              )}
+                    {expandedConnection === connection._id && (
+                      <div
+                        className={`list-group-item ${
+                          darkMode
+                            ? "bg-dark text-light border-secondary"
+                            : "bg-light"
+                        }`}
+                      >
+                        <div className="p-2">
+                          {connection.notes && (
+                            <div className="mb-3">
+                              <h6>Notes:</h6>
+                              <p className="text-muted">{connection.notes}</p>
                             </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="text-center py-3">
-                      No connections added yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                          )}
+
+                          <h6>Company Positions:</h6>
+                          {connectionPositions.length > 0 ? (
+                            <div className="table-responsive">
+                              <table
+                                className={`table table-sm ${
+                                  darkMode ? "table-dark" : "table-light"
+                                }`}
+                              >
+                                <thead>
+                                  <tr>
+                                    <th>Company</th>
+                                    <th>Position</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {connectionPositions.map((position) => (
+                                    <tr key={position._id}>
+                                      <td>{position.companyId.name}</td>
+                                      <td>{position.title}</td>
+                                      <td>{formatDate(position.startDate)}</td>
+                                      <td>
+                                        {position.current
+                                          ? "Current"
+                                          : formatDate(position.endDate)}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          ) : (
+                            <p className="text-muted">
+                              No positions associated with this connection.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <div
+                className={`list-group-item text-center py-3 ${
+                  darkMode ? "bg-dark text-light border-secondary" : ""
+                }`}
+              >
+                No connections added yet.
+              </div>
+            )}
           </div>
         </div>
       </div>

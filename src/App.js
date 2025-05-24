@@ -6,14 +6,20 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import ConnectionList from "./components/lists/ConnectionList";
 import CompanyList from "./components/lists/CompanyList";
+import PositionList from "./components/lists/PositionList";
 import ConnectionModal from "./components/modals/ConnectionModal";
 import CompanyModal from "./components/modals/CompanyModal";
+import PositionModal from "./components/modals/PositionModal";
 import ModalBackdrop from "./components/modals/ModalBackdrop";
 
 const MainApp = () => {
   const { darkMode, token } = useApp();
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [showCompanyModal, setShowCompanyModal] = useState(false);
+  const [showPositionModal, setShowPositionModal] = useState(false);
+  const [editConnection, setEditConnection] = useState(null);
+  const [editCompany, setEditCompany] = useState(null);
+  const [editPosition, setEditPosition] = useState(null);
 
   // Functions to handle modal toggling
   const openConnectionModal = () => setShowConnectionModal(true);
@@ -21,6 +27,9 @@ const MainApp = () => {
 
   const openCompanyModal = () => setShowCompanyModal(true);
   const closeCompanyModal = () => setShowCompanyModal(false);
+
+  const openPositionModal = () => setShowPositionModal(true);
+  const closePositionModal = () => setShowPositionModal(false);
 
   // If not logged in, show Auth component
   if (!token) {
@@ -42,10 +51,22 @@ const MainApp = () => {
 
         <main className="flex-grow-1 d-flex flex-column">
           <div className="row mb-4">
-            <ConnectionList openConnectionModal={openConnectionModal} />
+            <ConnectionList
+              openConnectionModal={openConnectionModal}
+              setEditConnection={setEditConnection}
+            />
           </div>
-          <div className="row">
-            <CompanyList openCompanyModal={openCompanyModal} />
+          <div className="row mb-4">
+            <CompanyList
+              openCompanyModal={openCompanyModal}
+              setEditCompany={setEditCompany}
+            />
+          </div>
+          <div className="row mb-4">
+            <PositionList
+              openPositionModal={openPositionModal}
+              setEditPosition={setEditPosition}
+            />
           </div>
         </main>
 
@@ -56,12 +77,21 @@ const MainApp = () => {
       <ConnectionModal
         showModal={showConnectionModal}
         closeModal={closeConnectionModal}
+        editConnection={editConnection}
       />
       <CompanyModal
         showModal={showCompanyModal}
         closeModal={closeCompanyModal}
+        editCompany={editCompany}
       />
-      <ModalBackdrop show={showConnectionModal || showCompanyModal} />
+      <PositionModal
+        showModal={showPositionModal}
+        closeModal={closePositionModal}
+        editPosition={editPosition}
+      />
+      <ModalBackdrop
+        show={showConnectionModal || showCompanyModal || showPositionModal}
+      />
     </div>
   );
 };

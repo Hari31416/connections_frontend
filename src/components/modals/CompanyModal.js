@@ -1,20 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
-const CompanyModal = ({ showModal, closeModal }) => {
-  const { darkMode, addCompany } = useApp();
+const CompanyModal = ({ showModal, closeModal, editCompany = null }) => {
+  const { darkMode, addCompany, updateCompany, positions } = useApp();
   const [newComp, setNewComp] = useState({
     name: "",
     industry: "",
     website: "",
   });
 
+  // If editing an existing company, populate the form
+  useEffect(() => {
+    if (editCompany) {
+      setNewComp({
+        id: editCompany._id,
+        name: editCompany.name || "",
+        industry: editCompany.industry || "",
+        website: editCompany.website || "",
+      });
+    } else {
+      // Reset form when adding a new company
+      setNewComp({
+        name: "",
+        industry: "",
+        website: "",
+      });
+    }
+  }, [editCompany, showModal]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await addCompany(newComp);
+    let success;
+
+    if (editCompany) {
+      success = await updateCompany(newComp);
+    } else {
+      success = await addCompany(newComp);
+    }
+
     if (success) {
       closeModal();
     }
+  };
+
+  // Get positions for this company
+  const getCompanyPositions = () => {
+    if (!editCompany) return [];
+
+    return positions.filter(
+      (position) => position.companyId._id === editCompany._id
+    );
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString();
   };
 
   return (
@@ -26,13 +66,13 @@ const CompanyModal = ({ showModal, closeModal }) => {
       aria-labelledby="companyModalLabel"
       aria-hidden={!showModal}
     >
-      <div className="modal-dialog" role="document">
+      <div className="modal-dialog modal-lg" role="document">
         <div
           className={`modal-content ${darkMode ? "bg-dark text-light" : ""}`}
         >
           <div className="modal-header">
             <h5 className="modal-title" id="companyModalLabel">
-              Add New Company
+              {editCompany ? "Edit Company" : "Add New Company"}
             </h5>
             <button
               type="button"
@@ -98,6 +138,54 @@ const CompanyModal = ({ showModal, closeModal }) => {
                   }
                 />
               </div>
+
+              {/* Show company positions when editing */}
+              {editCompany && (
+                <div className="mb-4 mt-4">
+                  <h6 className="border-bottom pb-2">People at this Company</h6>
+                  <div className="alert alert-info">
+                    <i className="bi bi-info-circle me-2"></i>
+                    To add or manage positions, use the Positions tab after
+                    saving this company.
+                  </div>
+
+                  {/* List of associated positions */}
+                  {getCompanyPositions().length > 0 ? (
+                    <div className="table-responsive">
+                      <table
+                        className={`table ${darkMode ? "table-dark" : ""}`}
+                      >
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Title</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getCompanyPositions().map((position) => (
+                            <tr key={position._id}>
+                              <td>{position.connectionId.name}</td>
+                              <td>{position.title}</td>
+                              <td>{formatDate(position.startDate)}</td>
+                              <td>
+                                {position.current
+                                  ? "Current"
+                                  : formatDate(position.endDate)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-muted mb-3">
+                      No positions associated with this company yet.
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button
@@ -108,7 +196,7 @@ const CompanyModal = ({ showModal, closeModal }) => {
                 Cancel
               </button>
               <button type="submit" className="btn btn-primary">
-                Save Company
+                {editCompany ? "Update Company" : "Save Company"}
               </button>
             </div>
           </form>
