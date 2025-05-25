@@ -1,70 +1,294 @@
-# Getting Started with Create React App
+# Connections Tracker Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern React.js single-page application for managing professional and personal connections with an intuitive, responsive interface.
 
-## Available Scripts
+## 🚀 Technology Stack
 
-In the project directory, you can run:
+- **React** (v19.1.0) - JavaScript library for building user interfaces
+- **Bootstrap** - CSS framework for responsive design
+- **Bootstrap Icons** - Icon library for UI elements
+- **React Context API** - State management
+- **JavaScript ES6+** - Modern JavaScript features
+- **CSS3** - Custom styling with dark/light mode support
 
-### `npm start`
+## 📋 Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Node.js (v14 or higher)
+- npm or yarn package manager
+- Backend API server running (see backend README.md)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Installation & Setup
 
-### `npm test`
+1. **Clone the repository and navigate to frontend directory:**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   ```bash
+   cd frontend
+   ```
 
-### `npm run build`
+2. **Install dependencies:**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   npm install
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. **Environment Configuration:**
+   Create a `.env` file in the frontend root directory:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```env
+   REACT_APP_API_BASE=http://localhost:4000/api
+   ```
 
-### `npm run eject`
+   For production, update the API base URL to your deployed backend.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. **Start the development server:**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   npm start
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   The application will open at `http://localhost:3000`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+5. **Build for production:**
+   ```bash
+   npm run build
+   ```
 
-## Learn More
+## 🏗️ Application Architecture
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Component Structure
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+src/
+├── components/
+│   ├── auth/
+│   │   ├── Auth.js                    # Login/Register forms
+│   │   └── FirstUserSetup.js          # Initial admin setup
+│   ├── layout/
+│   │   ├── Header.js                  # Navigation header
+│   │   ├── Footer.js                  # Application footer
+│   │   └── ServerLoading.js           # Backend connectivity check
+│   ├── lists/
+│   │   ├── ConnectionList.js          # Display all connections
+│   │   ├── CompanyList.js             # Display all companies
+│   │   └── PositionList.js            # Display all positions
+│   ├── modals/
+│   │   ├── ConnectionModal.js         # Add/Edit connections
+│   │   ├── CompanyModal.js            # Add/Edit companies
+│   │   ├── PositionModal.js           # Add/Edit positions
+│   │   ├── UserManagementModal.js     # Admin user management
+│   │   └── ModalBackdrop.js           # Modal overlay component
+│   └── pages/
+│       ├── ConnectionDetails.js       # Individual connection view
+│       └── CompanyDetails.js          # Individual company view
+├── context/
+│   ├── AppContext.js                  # Global state management
+│   ├── apiUtils.js                    # HTTP request utilities
+│   ├── authService.js                 # Authentication services
+│   ├── connectionService.js           # Connection API calls
+│   ├── companyService.js              # Company API calls
+│   └── positionService.js             # Position API calls
+└── App.js                             # Main application component
+```
 
-### Code Splitting
+### State Management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The application uses React Context API for global state management, providing:
 
-### Analyzing the Bundle Size
+- **Authentication State**: User login status, JWT tokens, user info
+- **Data State**: Connections, companies, and positions
+- **UI State**: Dark mode, current view, modal states
+- **Loading States**: API call status and server connectivity
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🎨 Features
 
-### Making a Progressive Web App
+### Core Functionality
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **🔐 Authentication System**
 
-### Advanced Configuration
+  - First-time setup for admin user
+  - Secure login/logout
+  - JWT token management
+  - Admin user creation capabilities
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **👥 Connection Management**
 
-### Deployment
+  - Add, edit, delete personal/professional connections
+  - Store contact details (name, email, phone)
+  - Social media integration (LinkedIn, GitHub)
+  - Personal notes and relationship tracking
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **🏢 Company Management**
 
-### `npm run build` fails to minify
+  - Add, edit, delete company information
+  - Industry categorization
+  - Website links
+  - Integration with connection positions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **💼 Position Tracking**
+
+  - Link connections to companies with specific roles
+  - Track employment history with start/end dates
+  - Current position indicators
+  - Position-specific notes
+
+- **🔍 Advanced Views**
+  - Detailed connection profiles with career history
+  - Company profiles with employee listings
+  - Cross-referenced data relationships
+
+### UI/UX Features
+
+- **🌓 Dark/Light Mode Toggle**
+- **📱 Fully Responsive Design** (Mobile, Tablet, Desktop)
+- **⚡ Real-time Data Updates**
+- **🎯 Intuitive Navigation**
+- **📊 Organized Data Display**
+- **🔄 Server Health Monitoring**
+
+## 🔗 API Integration
+
+The frontend communicates with the backend API through service modules:
+
+### Authentication Flow
+
+1. **Health Check**: Verifies backend connectivity
+2. **User Existence Check**: Determines if setup is needed
+3. **Login/Register**: JWT token acquisition
+4. **Protected Routes**: Token-based API access
+
+### Data Flow
+
+1. **Fetch**: Load user's connections, companies, and positions
+2. **CRUD Operations**: Create, read, update, delete through API
+3. **State Updates**: Real-time UI updates after API calls
+4. **Error Handling**: User-friendly error messages
+
+## 🎯 Usage Guide
+
+### First Time Setup
+
+1. Access the application
+2. Complete admin user setup (first launch only)
+3. Login with created credentials
+
+### Managing Connections
+
+1. Click "Add Connection" to create new contacts
+2. Fill in contact details and notes
+3. View connection details by clicking on names
+4. Edit or delete connections as needed
+
+### Managing Companies
+
+1. Use "Add Company" to create company profiles
+2. Include industry and website information
+3. View company details and associated employees
+
+### Managing Positions
+
+1. Create positions to link connections with companies
+2. Specify job titles, dates, and employment status
+3. Track career progression and company relationships
+
+### Navigation
+
+- **Main View**: Overview of all data with quick actions
+- **Detail Views**: Deep dive into specific connections or companies
+- **Modals**: Quick add/edit functionality
+- **Dark Mode**: Toggle in header for preferred theme
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable             | Description          | Default                     |
+| -------------------- | -------------------- | --------------------------- |
+| `REACT_APP_API_BASE` | Backend API base URL | `http://localhost:4000/api` |
+
+### Customization
+
+The application supports easy customization through:
+
+- **CSS Variables**: Modify colors and spacing in `index.css`
+- **Bootstrap Classes**: Leverage Bootstrap's utility classes
+- **Component Props**: Configurable component behavior
+
+## 🚀 Deployment
+
+### Build Process
+
+```bash
+npm run build
+```
+
+This creates an optimized production build in the `build/` directory.
+
+### Deployment Platforms
+
+**Recommended**: Vercel, Netlify, or GitHub Pages
+
+#### Vercel Deployment
+
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+#### Netlify Deployment
+
+1. Build the project: `npm run build`
+2. Upload the `build/` directory to Netlify
+3. Configure environment variables
+
+### Environment Variables for Production
+
+```env
+REACT_APP_API_BASE=https://your-backend-api.com/api
+```
+
+## 🔒 Security Considerations
+
+- **JWT Storage**: Tokens stored in localStorage with automatic cleanup
+- **Protected Routes**: Authentication checks before API calls
+- **Input Validation**: Form validation and sanitization
+- **Error Handling**: Secure error messages without sensitive data exposure
+
+## 🔧 Development Scripts
+
+```bash
+npm start        # Start development server
+npm run build    # Build for production
+npm test         # Run tests
+npm run eject    # Eject from Create React App (irreversible)
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Backend Connection Issues**
+
+   - Verify backend server is running
+   - Check API base URL in environment variables
+   - Monitor browser console for network errors
+
+2. **Authentication Problems**
+
+   - Clear localStorage and retry login
+   - Verify JWT token validity
+   - Check backend authentication endpoints
+
+3. **Build Issues**
+   - Clear node_modules and reinstall: `rm -rf node_modules package-lock.json && npm install`
+   - Verify Node.js version compatibility
+
+## 📄 License
+
+MIT License - see LICENSE file for details
+
+## 👨‍💻 Author
+
+**Harikesh Kushwaha**
+
+---
+
+For backend API documentation, see the backend README.md file.
