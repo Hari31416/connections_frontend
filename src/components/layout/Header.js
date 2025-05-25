@@ -12,7 +12,7 @@ const Header = ({ openUserManagementModal }) => {
             darkMode ? "text-light" : "text-dark"
           }`}
         >
-          My CRM Dashboard
+          Connections
         </h1>
         <div className="d-flex align-items-center gap-2">
           {user?.isAdmin && (

@@ -7,7 +7,8 @@ const Footer = () => {
   return (
     <footer className="text-center py-3 mt-auto border-top">
       <p className="text-muted mb-0">
-        &copy; {new Date().getFullYear()} My CRM Dashboard
+        &copy; {new Date().getFullYear()} Connections Manager. All rights
+        reserved.
       </p>
     </footer>
   );
