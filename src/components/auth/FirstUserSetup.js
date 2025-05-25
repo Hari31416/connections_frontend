@@ -65,7 +65,7 @@ const FirstUserSetup = () => {
             onClick={toggleDarkMode}
             disabled={loading}
           >
-            {darkMode ? "Light Mode" : "Dark Mode"}
+            {darkMode ? "Light Side" : "Dark Side"}
           </button>
         </div>
 

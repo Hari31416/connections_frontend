@@ -58,7 +58,7 @@ const Auth = () => {
             onClick={toggleDarkMode}
             disabled={authLoading}
           >
-            {darkMode ? "Light Mode" : "Dark Mode"}
+            {darkMode ? "Light Side" : "Dark Side"}
           </button>
         </div>
         <h2 className="card-title text-center mb-4">Welcome Back!</h2>

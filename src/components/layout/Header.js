@@ -37,7 +37,7 @@ const Header = ({ openUserManagementModal }) => {
             className="btn btn-outline-primary btn-sm"
             onClick={toggleDarkMode}
           >
-            {darkMode ? "Light Mode" : "Dark Mode"}
+            {darkMode ? "Light Side" : "Dark Side"}
           </button>
           <button className="btn btn-danger btn-sm" onClick={logout}>
             <i className="bi bi-box-arrow-right me-1"></i>
