@@ -30,18 +30,37 @@ export const fetchWithAuth = async (endpoint, options = {}, token) => {
   const url = `${API_BASE}${endpoint}`;
   const headers = {
     ...options.headers,
-    Authorization: token ? `Bearer ${token}` : "",
+    "Content-Type": "application/json",
   };
+
+  // Only add Authorization header if token is provided
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   try {
     const response = await fetch(url, { ...options, headers });
+
+    // Always try to parse the response body for error details
+    const responseData = await response.json();
+
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      // If the backend sent an error message, use that; otherwise use a generic message
+      const errorMessage =
+        responseData.error ||
+        `API error: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
     }
-    return await response.json();
+
+    return responseData;
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
-    throw error;
+    // If it's already our custom error with backend message, just re-throw it
+    if (error.message && !error.message.startsWith("API error:")) {
+      throw error;
+    }
+    // For network errors or other issues, provide a generic message
+    throw new Error(error.message || "Network error occurred");
   }
 };
 

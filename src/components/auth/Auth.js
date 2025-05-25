@@ -17,6 +17,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [authError, setAuthError] = useState("");
 
   // Show loading screen if server is not ready
   if (!serverReady) {
@@ -26,8 +27,9 @@ const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Clear any previous password errors
+    // Clear any previous errors
     setPasswordError("");
+    setAuthError("");
 
     // For registration, check if passwords match
     if (view === "register" && password !== confirmPassword) {
@@ -35,20 +37,27 @@ const Auth = () => {
       return;
     }
 
-    await handleAuth(
+    const result = await handleAuth(
       view === "login" ? "/login" : "/register",
       email,
       password
     );
-    // Clear form fields on submission
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
+
+    if (result.success) {
+      // Clear form fields on successful submission
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } else {
+      // Display the specific error message from backend
+      setAuthError(result.error);
+    }
   };
 
-  // Clear password error when switching between login/register
+  // Clear errors when switching between login/register
   const handleViewChange = (newView) => {
     setPasswordError("");
+    setAuthError("");
     setView(newView);
   };
 
@@ -78,6 +87,14 @@ const Auth = () => {
         <h2 className="card-title text-center mb-4">
           {view === "login" ? "Welcome Back!" : "Join Us!"}
         </h2>
+
+        {/* General authentication error display */}
+        {authError && (
+          <div className="alert alert-danger mb-3" role="alert">
+            {authError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="emailInput" className="form-label visually-hidden">

@@ -120,15 +120,19 @@ export const AppProvider = ({ children }) => {
         setToken(data.token);
         localStorage.setItem("token", data.token);
         setView("main");
-        return true;
+        return { success: true };
       } else {
-        alert(data.error || "Authentication failed.");
-        return false;
+        return {
+          success: false,
+          error: data.error || "Authentication failed.",
+        };
       }
     } catch (error) {
       console.error("Authentication error:", error);
-      alert("Authentication failed. Please try again.");
-      return false;
+      return {
+        success: false,
+        error: "Authentication failed. Please try again.",
+      };
     } finally {
       setAuthLoading(false);
     }

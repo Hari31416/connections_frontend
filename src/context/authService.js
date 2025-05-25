@@ -7,7 +7,8 @@ export const loginUser = async (email, password) => {
     return data;
   } catch (error) {
     console.error("Authentication error:", error);
-    return { error: "Authentication failed" };
+    // Return the specific error message from the backend
+    return { error: error.message };
   }
 };
 
@@ -17,6 +18,7 @@ export const registerUser = async (email, password) => {
     return data;
   } catch (error) {
     console.error("Registration error:", error);
-    return { error: "Registration failed" };
+    // Return the specific error message from the backend
+    return { error: error.message };
   }
 };
