@@ -155,7 +155,7 @@ const MainApp = () => {
           className="container-fluid d-flex flex-column flex-grow-1"
           style={{ maxWidth: 1140, padding: "0 15px" }}
         >
-          <Header />
+          <Header openUserManagementModal={openUserManagementModal} />
 
           <main className="flex-grow-1 d-flex flex-column">
             <div className="row mb-4">
@@ -185,7 +185,7 @@ const MainApp = () => {
           className="container-fluid d-flex flex-column flex-grow-1"
           style={{ maxWidth: 1140, padding: "0 15px" }}
         >
-          <Header />
+          <Header openUserManagementModal={openUserManagementModal} />
 
           <main className="flex-grow-1 d-flex flex-column">
             <div className="row mb-4">
@@ -214,39 +214,9 @@ const MainApp = () => {
         className="container-fluid d-flex flex-column flex-grow-1"
         style={{ maxWidth: 1140, padding: "0 15px" }}
       >
-        <Header />
+        <Header openUserManagementModal={openUserManagementModal} />
 
         <main className="flex-grow-1 d-flex flex-column">
-          {/* Admin Panel */}
-          {user?.isAdmin && (
-            <div className="row mb-4">
-              <div className="col-12">
-                <div
-                  className={`card ${
-                    darkMode ? "bg-dark border-secondary" : ""
-                  }`}
-                >
-                  <div className="card-body">
-                    <h5 className="card-title">
-                      <i className="bi bi-shield-check me-2"></i>
-                      Admin Panel
-                    </h5>
-                    <p className="card-text">
-                      Manage users and system settings.
-                    </p>
-                    <button
-                      className="btn btn-success"
-                      onClick={openUserManagementModal}
-                    >
-                      <i className="bi bi-person-plus me-2"></i>
-                      Create New User
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="row mb-4">
             <ConnectionList
               openConnectionModal={openConnectionModal}

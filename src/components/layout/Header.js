@@ -1,7 +1,7 @@
 import React from "react";
 import { useApp } from "../../context/AppContext";
 
-const Header = () => {
+const Header = ({ openUserManagementModal }) => {
   const { darkMode, toggleDarkMode, logout, user } = useApp();
 
   return (
@@ -16,7 +16,16 @@ const Header = () => {
         </h1>
         <div className="d-flex align-items-center gap-2">
           {user?.isAdmin && (
-            <span className="badge bg-success me-2">Admin</span>
+            <>
+              <button
+                className="btn btn-success btn-sm"
+                onClick={openUserManagementModal}
+              >
+                <i className="bi bi-person-plus me-1"></i>
+                Create User
+              </button>
+              <span className="badge bg-success me-2">Admin</span>
+            </>
           )}
           <button
             className="btn btn-outline-primary btn-sm"
