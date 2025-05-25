@@ -11,6 +11,7 @@ import PositionList from "./components/lists/PositionList";
 import ConnectionModal from "./components/modals/ConnectionModal";
 import CompanyModal from "./components/modals/CompanyModal";
 import PositionModal from "./components/modals/PositionModal";
+import UserManagementModal from "./components/modals/UserManagementModal";
 import ModalBackdrop from "./components/modals/ModalBackdrop";
 import ConnectionDetails from "./components/pages/ConnectionDetails";
 import CompanyDetails from "./components/pages/CompanyDetails";
@@ -19,6 +20,7 @@ const MainApp = () => {
   const {
     darkMode,
     token,
+    user,
     serverReady,
     healthCheckAttempts,
     initialDataLoading,
@@ -26,6 +28,7 @@ const MainApp = () => {
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [showCompanyModal, setShowCompanyModal] = useState(false);
   const [showPositionModal, setShowPositionModal] = useState(false);
+  const [showUserManagementModal, setShowUserManagementModal] = useState(false);
   const [editConnection, setEditConnection] = useState(null);
   const [editCompany, setEditCompany] = useState(null);
   const [editPosition, setEditPosition] = useState(null);
@@ -50,6 +53,9 @@ const MainApp = () => {
 
   const openPositionModal = () => setShowPositionModal(true);
   const closePositionModal = () => setShowPositionModal(false);
+
+  const openUserManagementModal = () => setShowUserManagementModal(true);
+  const closeUserManagementModal = () => setShowUserManagementModal(false);
 
   // Function to view connection details
   const viewConnection = (connectionId) => {
@@ -177,6 +183,36 @@ const MainApp = () => {
         <Header />
 
         <main className="flex-grow-1 d-flex flex-column">
+          {/* Admin Panel */}
+          {user?.isAdmin && (
+            <div className="row mb-4">
+              <div className="col-12">
+                <div
+                  className={`card ${
+                    darkMode ? "bg-dark border-secondary" : ""
+                  }`}
+                >
+                  <div className="card-body">
+                    <h5 className="card-title">
+                      <i className="bi bi-shield-check me-2"></i>
+                      Admin Panel
+                    </h5>
+                    <p className="card-text">
+                      Manage users and system settings.
+                    </p>
+                    <button
+                      className="btn btn-success"
+                      onClick={openUserManagementModal}
+                    >
+                      <i className="bi bi-person-plus me-2"></i>
+                      Create New User
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="row mb-4">
             <ConnectionList
               openConnectionModal={openConnectionModal}
@@ -220,8 +256,17 @@ const MainApp = () => {
         closeModal={closePositionModal}
         editPosition={editPosition}
       />
+      <UserManagementModal
+        showModal={showUserManagementModal}
+        closeModal={closeUserManagementModal}
+      />
       <ModalBackdrop
-        show={showConnectionModal || showCompanyModal || showPositionModal}
+        show={
+          showConnectionModal ||
+          showCompanyModal ||
+          showPositionModal ||
+          showUserManagementModal
+        }
       />
     </div>
   );

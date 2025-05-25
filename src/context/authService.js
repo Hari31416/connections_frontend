@@ -22,3 +22,18 @@ export const registerUser = async (email, password) => {
     return { error: error.message };
   }
 };
+
+// Function to decode JWT token and get user info
+export const getUserFromToken = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return {
+      userId: payload.userId,
+      email: payload.email,
+      isAdmin: payload.isAdmin,
+    };
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};

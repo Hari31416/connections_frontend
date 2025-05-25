@@ -2,7 +2,7 @@ import React from "react";
 import { useApp } from "../../context/AppContext";
 
 const Header = () => {
-  const { darkMode, toggleDarkMode, logout } = useApp();
+  const { darkMode, toggleDarkMode, logout, user } = useApp();
 
   return (
     <header className="navbar navbar-expand-lg mb-4 pb-3">
@@ -15,6 +15,9 @@ const Header = () => {
           My CRM Dashboard
         </h1>
         <div className="d-flex align-items-center gap-2">
+          {user?.isAdmin && (
+            <span className="badge bg-success me-2">Admin</span>
+          )}
           <button
             className="btn btn-outline-primary btn-sm"
             onClick={toggleDarkMode}

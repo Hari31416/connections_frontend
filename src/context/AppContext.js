@@ -11,6 +11,7 @@ export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
   const [connections, setConnections] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -20,6 +21,14 @@ export const AppProvider = ({ children }) => {
   const [healthCheckAttempts, setHealthCheckAttempts] = useState(0);
   const [authLoading, setAuthLoading] = useState(false);
   const [initialDataLoading, setInitialDataLoading] = useState(false);
+
+  // Initialize user from token when app starts
+  useEffect(() => {
+    if (token) {
+      const userInfo = authService.getUserFromToken(token);
+      setUser(userInfo);
+    }
+  }, []);
 
   // Function to perform health check
   const performHealthCheck = async () => {
@@ -119,6 +128,11 @@ export const AppProvider = ({ children }) => {
       if (data.token) {
         setToken(data.token);
         localStorage.setItem("token", data.token);
+
+        // Extract user info from token
+        const userInfo = authService.getUserFromToken(data.token);
+        setUser(userInfo);
+
         setView("main");
         return { success: true };
       } else {
@@ -241,6 +255,7 @@ export const AppProvider = ({ children }) => {
 
   const logout = () => {
     setToken("");
+    setUser(null);
     localStorage.removeItem("token");
     setConnections([]);
     setCompanies([]);
@@ -257,6 +272,7 @@ export const AppProvider = ({ children }) => {
       value={{
         API,
         token,
+        user,
         darkMode,
         connections,
         companies,

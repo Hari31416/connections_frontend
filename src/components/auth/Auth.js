@@ -7,16 +7,12 @@ const Auth = () => {
     darkMode,
     toggleDarkMode,
     handleAuth,
-    view,
-    setView,
     serverReady,
     healthCheckAttempts,
     authLoading,
   } = useApp();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [authError, setAuthError] = useState("");
 
   // Show loading screen if server is not ready
@@ -28,37 +24,18 @@ const Auth = () => {
     e.preventDefault();
 
     // Clear any previous errors
-    setPasswordError("");
     setAuthError("");
 
-    // For registration, check if passwords match
-    if (view === "register" && password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
-
-    const result = await handleAuth(
-      view === "login" ? "/login" : "/register",
-      email,
-      password
-    );
+    const result = await handleAuth("/login", email, password);
 
     if (result.success) {
       // Clear form fields on successful submission
       setEmail("");
       setPassword("");
-      setConfirmPassword("");
     } else {
       // Display the specific error message from backend
       setAuthError(result.error);
     }
-  };
-
-  // Clear errors when switching between login/register
-  const handleViewChange = (newView) => {
-    setPasswordError("");
-    setAuthError("");
-    setView(newView);
   };
 
   return (
@@ -84,9 +61,7 @@ const Auth = () => {
             {darkMode ? "Light Mode" : "Dark Mode"}
           </button>
         </div>
-        <h2 className="card-title text-center mb-4">
-          {view === "login" ? "Welcome Back!" : "Join Us!"}
-        </h2>
+        <h2 className="card-title text-center mb-4">Welcome Back!</h2>
 
         {/* General authentication error display */}
         {authError && (
@@ -135,32 +110,6 @@ const Auth = () => {
               disabled={authLoading}
             />
           </div>
-          {view === "register" && (
-            <div className="mb-3">
-              <label
-                htmlFor="confirmPasswordInput"
-                className="form-label visually-hidden"
-              >
-                Confirm Password
-              </label>
-              <input
-                id="confirmPasswordInput"
-                className={`form-control form-control-lg ${
-                  darkMode ? "bg-dark text-light border-secondary" : ""
-                } ${passwordError ? "border-danger" : ""}`}
-                placeholder="Confirm Password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                aria-label="Confirm Password"
-                required
-                disabled={authLoading}
-              />
-              {passwordError && (
-                <div className="text-danger mt-2 small">{passwordError}</div>
-              )}
-            </div>
-          )}
           <button
             type="submit"
             className="btn btn-primary btn-lg w-100 mb-3"
@@ -174,33 +123,13 @@ const Auth = () => {
                 >
                   <span className="visually-hidden">Loading...</span>
                 </div>
-                {view === "login" ? "Signing in..." : "Creating account..."}
+                Signing in...
               </div>
-            ) : view === "login" ? (
-              "Login"
             ) : (
-              "Register"
+              "Login"
             )}
           </button>
         </form>
-        <div className="text-center">
-          <a
-            href="#"
-            className="text-primary"
-            onClick={(e) => {
-              e.preventDefault();
-              handleViewChange(view === "login" ? "register" : "login");
-            }}
-            style={{
-              pointerEvents: authLoading ? "none" : "auto",
-              opacity: authLoading ? 0.5 : 1,
-            }}
-          >
-            {view === "login"
-              ? "No account? Register here."
-              : "Already have an account? Login here."}
-          </a>
-        </div>
       </div>
     </div>
   );
