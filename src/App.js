@@ -16,7 +16,13 @@ import ConnectionDetails from "./components/pages/ConnectionDetails";
 import CompanyDetails from "./components/pages/CompanyDetails";
 
 const MainApp = () => {
-  const { darkMode, token, serverReady, healthCheckAttempts } = useApp();
+  const {
+    darkMode,
+    token,
+    serverReady,
+    healthCheckAttempts,
+    initialDataLoading,
+  } = useApp();
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [showCompanyModal, setShowCompanyModal] = useState(false);
   const [showPositionModal, setShowPositionModal] = useState(false);
@@ -70,6 +76,31 @@ const MainApp = () => {
   // Show loading screen if server is not ready
   if (!serverReady) {
     return <ServerLoading darkMode={darkMode} attempts={healthCheckAttempts} />;
+  }
+
+  // Show loading screen while fetching initial data after login
+  if (initialDataLoading) {
+    return (
+      <div
+        className={`d-flex flex-column align-items-center justify-content-center min-vh-100 ${
+          darkMode ? "bg-dark text-light" : "bg-light text-dark"
+        }`}
+      >
+        <div className="text-center">
+          <div
+            className="spinner-border mb-3"
+            role="status"
+            style={{ width: "3rem", height: "3rem" }}
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <h4 className="mb-2">Loading your data...</h4>
+          <p className="text-muted">
+            Fetching your connections, companies, and positions
+          </p>
+        </div>
+      </div>
+    );
   }
 
   // Connection Details View

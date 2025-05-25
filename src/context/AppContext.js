@@ -18,6 +18,8 @@ export const AppProvider = ({ children }) => {
   const [view, setView] = useState("login");
   const [serverReady, setServerReady] = useState(false);
   const [healthCheckAttempts, setHealthCheckAttempts] = useState(0);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [initialDataLoading, setInitialDataLoading] = useState(false);
 
   // Function to perform health check
   const performHealthCheck = async () => {
@@ -72,23 +74,29 @@ export const AppProvider = ({ children }) => {
   // Function to refresh all data
   const refreshData = () => {
     if (token && serverReady) {
-      // Fetch connections
-      connectionService
-        .fetchConnections(token)
-        .then(setConnections)
-        .catch((error) => console.error("Error fetching connections:", error));
+      setInitialDataLoading(true);
 
-      // Fetch companies
-      companyService
-        .fetchCompanies(token)
-        .then(setCompanies)
-        .catch((error) => console.error("Error fetching companies:", error));
+      const fetchPromises = [
+        connectionService.fetchConnections(token).then(setConnections),
+        companyService.fetchCompanies(token).then(setCompanies),
+        positionService.fetchPositions(token).then(setPositions),
+      ];
 
-      // Fetch positions
-      positionService
-        .fetchPositions(token)
-        .then(setPositions)
-        .catch((error) => console.error("Error fetching positions:", error));
+      Promise.allSettled(fetchPromises)
+        .then((results) => {
+          results.forEach((result, index) => {
+            if (result.status === "rejected") {
+              const entityNames = ["connections", "companies", "positions"];
+              console.error(
+                `Error fetching ${entityNames[index]}:`,
+                result.reason
+              );
+            }
+          });
+        })
+        .finally(() => {
+          setInitialDataLoading(false);
+        });
     }
   };
 
@@ -99,18 +107,30 @@ export const AppProvider = ({ children }) => {
   }, [token, serverReady]);
 
   const handleAuth = async (endpoint, email, password) => {
-    const authFunction =
-      endpoint === "/login" ? authService.loginUser : authService.registerUser;
-    const data = await authFunction(email, password);
+    setAuthLoading(true);
 
-    if (data.token) {
-      setToken(data.token);
-      localStorage.setItem("token", data.token);
-      setView("main");
-      return true;
-    } else {
-      alert(data.error || "Authentication failed.");
+    try {
+      const authFunction =
+        endpoint === "/login"
+          ? authService.loginUser
+          : authService.registerUser;
+      const data = await authFunction(email, password);
+
+      if (data.token) {
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
+        setView("main");
+        return true;
+      } else {
+        alert(data.error || "Authentication failed.");
+        return false;
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      alert("Authentication failed. Please try again.");
       return false;
+    } finally {
+      setAuthLoading(false);
     }
   };
 
@@ -256,6 +276,8 @@ export const AppProvider = ({ children }) => {
         toggleDarkMode,
         serverReady,
         healthCheckAttempts,
+        authLoading,
+        initialDataLoading,
       }}
     >
       {children}
