@@ -21,6 +21,8 @@ export const AppProvider = ({ children }) => {
   const [healthCheckAttempts, setHealthCheckAttempts] = useState(0);
   const [authLoading, setAuthLoading] = useState(false);
   const [initialDataLoading, setInitialDataLoading] = useState(false);
+  const [hasUsers, setHasUsers] = useState(null); // null = checking, true = has users, false = no users
+  const [checkingUsers, setCheckingUsers] = useState(false);
 
   // Initialize user from token when app starts
   useEffect(() => {
@@ -29,6 +31,31 @@ export const AppProvider = ({ children }) => {
       setUser(userInfo);
     }
   }, []);
+
+  // Check if users exist when server becomes ready
+  useEffect(() => {
+    const checkUsersExistence = async () => {
+      if (serverReady && !token && hasUsers === null && !checkingUsers) {
+        setCheckingUsers(true);
+        try {
+          const result = await authService.checkUsersExist();
+          if (result.error) {
+            console.error("Error checking users:", result.error);
+            setHasUsers(true); // Default to showing login if check fails
+          } else {
+            setHasUsers(result.hasUsers);
+          }
+        } catch (error) {
+          console.error("Error checking users:", error);
+          setHasUsers(true); // Default to showing login if check fails
+        } finally {
+          setCheckingUsers(false);
+        }
+      }
+    };
+
+    checkUsersExistence();
+  }, [serverReady, token, hasUsers, checkingUsers]);
 
   // Function to perform health check
   const performHealthCheck = async () => {
@@ -261,6 +288,7 @@ export const AppProvider = ({ children }) => {
     setCompanies([]);
     setPositions([]);
     setView("login");
+    setHasUsers(null); // Reset to check again after logout
   };
 
   const toggleDarkMode = () => {
@@ -272,7 +300,9 @@ export const AppProvider = ({ children }) => {
       value={{
         API,
         token,
+        setToken,
         user,
+        setUser,
         darkMode,
         connections,
         companies,
@@ -298,6 +328,8 @@ export const AppProvider = ({ children }) => {
         healthCheckAttempts,
         authLoading,
         initialDataLoading,
+        hasUsers,
+        checkingUsers,
       }}
     >
       {children}

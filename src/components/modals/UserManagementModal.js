@@ -27,7 +27,7 @@ const UserManagementModal = ({ showModal, closeModal }) => {
     setLoading(true);
 
     try {
-      const result = await authService.registerUser(email, password);
+      const result = await authService.registerUser(email, password, token);
 
       if (result.error) {
         setError(result.error);

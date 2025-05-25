@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { AppProvider, useApp } from "./context/AppContext";
 import Auth from "./components/auth/Auth";
+import FirstUserSetup from "./components/auth/FirstUserSetup";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import ServerLoading from "./components/layout/ServerLoading";
@@ -24,6 +25,8 @@ const MainApp = () => {
     serverReady,
     healthCheckAttempts,
     initialDataLoading,
+    hasUsers,
+    checkingUsers,
   } = useApp();
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [showCompanyModal, setShowCompanyModal] = useState(false);
@@ -74,14 +77,45 @@ const MainApp = () => {
     setViewCompanyId(null);
   };
 
-  // If not logged in, show Auth component
-  if (!token) {
-    return <Auth />;
-  }
-
   // Show loading screen if server is not ready
   if (!serverReady) {
     return <ServerLoading darkMode={darkMode} attempts={healthCheckAttempts} />;
+  }
+
+  // If not logged in, determine what to show
+  if (!token) {
+    // Still checking if users exist
+    if (checkingUsers || hasUsers === null) {
+      return (
+        <div
+          className={`d-flex flex-column align-items-center justify-content-center min-vh-100 ${
+            darkMode ? "bg-dark text-light" : "bg-light text-dark"
+          }`}
+        >
+          <div className="text-center">
+            <div
+              className="spinner-border mb-3"
+              role="status"
+              style={{ width: "3rem", height: "3rem" }}
+            >
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <h4 className="mb-2">Checking system status...</h4>
+            <p className="text-muted">
+              Please wait while we initialize the system
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // No users exist - show first user setup
+    if (!hasUsers) {
+      return <FirstUserSetup />;
+    }
+
+    // Users exist - show normal login
+    return <Auth />;
   }
 
   // Show loading screen while fetching initial data after login
