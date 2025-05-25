@@ -13,6 +13,91 @@
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
+  --brand-gradient: linear-gradient(135deg, #3498db, #2980b9);
+  --brand-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+}
+
+/* Enhanced Brand Styling */
+.brand-container {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.brand-icon {
+  font-size: 2.2rem;
+  color: var(--primary-color);
+  filter: drop-shadow(0 2px 4px rgba(52, 152, 219, 0.3));
+  transition: all 0.3s ease;
+}
+
+.brand-title {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.brand-main {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  margin-bottom: -0.15rem;
+}
+
+.brand-sub {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Dark mode brand styling */
+.dark-mode .brand-main {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .brand-sub {
+  color: #74b9ff;
+}
+
+.dark-mode .brand-icon {
+  color: #74b9ff;
+  filter: drop-shadow(0 2px 4px rgba(116, 185, 255, 0.3));
+}
+
+/* Hover effects for brand */
+.brand-container:hover .brand-icon {
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 8px rgba(52, 152, 219, 0.4));
+}
+
+.brand-container:hover .brand-main {
+  background: linear-gradient(135deg, #2980b9, #1f5f8b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .brand-container:hover .brand-main {
+  background: linear-gradient(135deg, #0984e3, #74b9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Ensure dark mode is consistent throughout the app */

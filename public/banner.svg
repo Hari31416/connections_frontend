@@ -1,0 +1,155 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Brand gradient -->
+    <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Secondary gradient for depth -->
+    <linearGradient id="secondaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#74b9ff;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#0984e3;stop-opacity:0.8" />
+    </linearGradient>
+    
+    <!-- Accent gradient -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f8ff;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Dark outline gradient -->
+    <linearGradient id="outlineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a365d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2c5282;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Background pattern -->
+    <pattern id="backgroundPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/>
+    </pattern>
+    
+    <!-- Glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Drop shadow -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#2980b9" flood-opacity="0.3"/>
+    </filter>
+    
+    <!-- Arrow marker for connection lines -->
+    <marker id="arrowhead" markerWidth="5" markerHeight="3" 
+            refX="4" refY="1.5" orient="auto">
+      <polygon points="0 0, 5 1.5, 0 3" fill="white" opacity="0.8"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#brandGradient)"/>
+  <rect width="1200" height="630" fill="url(#backgroundPattern)" opacity="0.3"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="80" fill="url(#secondaryGradient)" opacity="0.3"/>
+  <circle cx="1100" cy="530" r="120" fill="url(#secondaryGradient)" opacity="0.2"/>
+  <circle cx="50" cy="500" r="60" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="1150" cy="100" r="90" fill="rgba(255,255,255,0.05)"/>
+  
+  <!-- Main logo section -->
+  <g transform="translate(100, 180)">
+    <!-- Logo circle -->
+    <circle cx="120" cy="120" r="100" fill="rgba(255,255,255,0.15)" filter="url(#shadow)"/>
+    
+    <!-- Main person at the top (aligned with circle circumference) -->
+    <g transform="translate(120, 50)" filter="url(#glow)">
+      <circle cx="0" cy="-15" r="22" fill="white" stroke="url(#outlineGradient)" stroke-width="2"/>
+      <path d="M -28 28 Q -28 5 -14 5 L 14 5 Q 28 5 28 28 L 28 42 L -28 42 Z" fill="white" stroke="url(#outlineGradient)" stroke-width="2"/>
+    </g>
+    
+    <!-- Three connected people below in hierarchical layout (aligned with circumference) -->
+    <!-- Left connection (first level) -->
+    <g transform="translate(50, 150)" filter="url(#glow)">
+      <circle cx="0" cy="-12" r="18" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="1.5"/>
+      <path d="M -22 22 Q -22 4 -11 4 L 11 4 Q 22 4 22 22 L 22 34 L -22 34 Z" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Right connection (first level) -->
+    <g transform="translate(190, 150)" filter="url(#glow)">
+      <circle cx="0" cy="-12" r="18" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="1.5"/>
+      <path d="M -22 22 Q -22 4 -11 4 L 11 4 Q 22 4 22 22 L 22 34 L -22 34 Z" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Center connection (second level, on circumference) -->
+    <g transform="translate(120, 210)" filter="url(#glow)">
+      <circle cx="0" cy="-12" r="18" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="1.5"/>
+      <path d="M -22 22 Q -22 4 -11 4 L 11 4 Q 22 4 22 22 L 22 34 L -22 34 Z" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Connection lines with arrows showing hierarchical flow -->
+    <g stroke="white" stroke-width="3" stroke-opacity="0.8" fill="none" marker-end="url(#arrowhead)">
+      <!-- Lines from main person to first level connections -->
+      <line x1="120" y1="78" x2="75" y2="125"/>
+      <line x1="120" y1="78" x2="165" y2="125"/>
+      <!-- Line from main person to second level connection -->
+      <line x1="120" y1="78" x2="120" y2="185"/>
+    </g>
+  </g>
+  
+  <!-- Main text content -->
+  <g transform="translate(350, 200)">
+    <!-- "Connections" - using white for better readability -->
+    <text x="0" y="0" font-family="Poppins, Arial, sans-serif" font-size="72" font-weight="800" 
+          fill="white" letter-spacing="-0.02em" filter="url(#shadow)">
+      Connections
+    </text>
+    
+    <!-- "MANAGER" - matching header .brand-sub style -->
+    <text x="0" y="60" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="600" 
+          fill="rgba(255,255,255,0.9)" text-transform="uppercase" letter-spacing="0.1em">
+      MANAGER
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="0" y="120" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="500" fill="rgba(255,255,255,0.85)">
+      Professional Network &amp; Career Tracker
+    </text>
+    
+    <!-- Description -->
+    <text x="0" y="160" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="rgba(255,255,255,0.75)">
+      <tspan x="0" dy="0">Manage your professional connections, track career relationships,</tspan>
+      <tspan x="0" dy="30">and organize company information with ease.</tspan>
+    </text>
+  </g>
+  
+  <!-- Feature icons moved to the right side -->
+  <g transform="translate(950, 200)">
+    <!-- Network icon -->
+    <g transform="translate(0, 0)">
+      <circle cx="40" cy="40" r="30" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2"/>
+      <text x="40" y="52" font-family="Arial, sans-serif" font-size="28" fill="white" text-anchor="middle">🌐</text>
+      <text x="40" y="90" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.9)" text-anchor="middle">Network</text>
+    </g>
+    
+    <!-- Career icon -->
+    <g transform="translate(0, 120)">
+      <circle cx="40" cy="40" r="30" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2"/>
+      <text x="40" y="52" font-family="Arial, sans-serif" font-size="28" fill="white" text-anchor="middle">📈</text>
+      <text x="40" y="90" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.9)" text-anchor="middle">Track</text>
+    </g>
+    
+    <!-- Organization icon -->
+    <g transform="translate(0, 240)">
+      <circle cx="40" cy="40" r="30" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2"/>
+      <text x="40" y="52" font-family="Arial, sans-serif" font-size="28" fill="white" text-anchor="middle">🏢</text>
+      <text x="40" y="90" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" fill="rgba(255,255,255,0.9)" text-anchor="middle">Organize</text>
+    </g>
+  </g>
+
+  <!-- Bottom accent line -->
+  <rect x="0" y="620" width="1200" height="10" fill="url(#accentGradient)" opacity="0.3"/>
+</svg>

@@ -7,13 +7,19 @@ const Header = ({ openUserManagementModal }) => {
   return (
     <header className="navbar navbar-expand-lg mb-4 pb-3">
       <div className="container-fluid px-0">
-        <h1
-          className={`navbar-brand h3 mb-0 pt-4 ${
-            darkMode ? "text-light" : "text-dark"
-          }`}
-        >
-          Connections
-        </h1>
+        <div className="d-flex align-items-center">
+          <div className="brand-container me-3">
+            <i className="bi bi-people-fill brand-icon me-2"></i>
+            <h1
+              className={`brand-title mb-0 ${
+                darkMode ? "text-light" : "text-dark"
+              }`}
+            >
+              <span className="brand-main">Connections</span>
+              <span className="brand-sub">Manager</span>
+            </h1>
+          </div>
+        </div>
         <div className="d-flex align-items-center gap-2">
           {user?.isAdmin && (
             <>

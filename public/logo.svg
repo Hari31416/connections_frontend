@@ -1,0 +1,84 @@
+<svg width="512" height="512" viewBox="76 76 360 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Brand gradient -->
+    <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- High contrast accent gradient for better visibility -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f8ff;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Dark outline gradient for contrast -->
+    <linearGradient id="outlineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a365d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2c5282;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#3498db" flood-opacity="0.4"/>
+    </filter>
+    
+    <!-- Glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Arrow marker for connection lines -->
+    <marker id="arrowhead" markerWidth="6" markerHeight="4" 
+            refX="5" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="white" opacity="0.9"/>
+    </marker>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="180" fill="url(#brandGradient)" filter="url(#shadow)"/>
+  
+  <!-- Main people icons representing connections -->
+  <g filter="url(#glow)">
+    <!-- Main person at the top (larger, positioned on circumference) -->
+    <g transform="translate(256, 140)">
+      <circle cx="0" cy="-18" r="28" fill="white" stroke="url(#outlineGradient)" stroke-width="2" opacity="1"/>
+      <path d="M -35 35 Q -35 8 -18 8 L 18 8 Q 35 8 35 35 L 35 52 L -35 52 Z" fill="white" stroke="url(#outlineGradient)" stroke-width="2" opacity="1"/>
+    </g>
+    
+    <!-- Three connected people below in hierarchical layout (larger, on circumference) -->
+    <!-- Left connection (first level) -->
+    <g transform="translate(170, 290)">
+      <circle cx="0" cy="-18" r="26" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="2"/>
+      <path d="M -32 32 Q -32 6 -16 6 L 16 6 Q 32 6 32 32 L 32 48 L -32 48 Z" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="2"/>
+    </g>
+    
+    <!-- Right connection (first level) -->
+    <g transform="translate(342, 290)">
+      <circle cx="0" cy="-18" r="26" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="2"/>
+      <path d="M -32 32 Q -32 6 -16 6 L 16 6 Q 32 6 32 32 L 32 48 L -32 48 Z" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="2"/>
+    </g>
+    
+    <!-- Center connection (second level, on circumference) -->
+    <g transform="translate(256, 372)">
+      <circle cx="0" cy="-18" r="26" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="2"/>
+      <path d="M -32 32 Q -32 6 -16 6 L 16 6 Q 32 6 32 32 L 32 48 L -32 48 Z" fill="url(#accentGradient)" stroke="url(#outlineGradient)" stroke-width="2"/>
+    </g>
+  </g>
+  
+  <!-- Connection lines with arrows showing hierarchical flow -->
+  <g stroke="white" stroke-width="6" stroke-opacity="0.9" fill="none" marker-end="url(#arrowhead)">
+    <!-- Lines from main person to first level connections -->
+    <line x1="256" y1="175" x2="200" y2="250"/>
+    <line x1="256" y1="175" x2="312" y2="250"/>
+    <!-- Line from main person to second level connection -->
+    <line x1="256" y1="175" x2="256" y2="335"/>
+  </g>
+  
+  <!-- Subtle highlight effects -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#accentGradient)" stroke-width="3" opacity="0.6"/>
+</svg>
