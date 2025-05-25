@@ -1,5 +1,30 @@
 // API utility functions
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:4000/api";
+const HEALTH_CHECK_URL = process.env.REACT_APP_API_BASE
+  ? `${process.env.REACT_APP_API_BASE.replace("/api", "")}/health`
+  : "http://localhost:4000/health";
+
+// Health check function to verify backend is ready
+export const checkServerHealth = async () => {
+  try {
+    const response = await fetch(HEALTH_CHECK_URL, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Health check failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.status === "OK";
+  } catch (error) {
+    console.log("Health check failed:", error.message);
+    return false;
+  }
+};
 
 export const fetchWithAuth = async (endpoint, options = {}, token) => {
   const url = `${API_BASE}${endpoint}`;

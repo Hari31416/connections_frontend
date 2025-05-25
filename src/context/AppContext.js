@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { API } from "./apiUtils";
+import { API, checkServerHealth } from "./apiUtils";
 import * as connectionService from "./connectionService";
 import * as companyService from "./companyService";
 import * as positionService from "./positionService";
@@ -16,10 +16,62 @@ export const AppProvider = ({ children }) => {
   const [companies, setCompanies] = useState([]);
   const [positions, setPositions] = useState([]);
   const [view, setView] = useState("login");
+  const [serverReady, setServerReady] = useState(false);
+  const [healthCheckAttempts, setHealthCheckAttempts] = useState(0);
+
+  // Function to perform health check
+  const performHealthCheck = async () => {
+    console.log("Checking server health...");
+    const isHealthy = await checkServerHealth();
+
+    if (isHealthy) {
+      console.log("Server is ready!");
+      setServerReady(true);
+      return true;
+    } else {
+      setHealthCheckAttempts((prev) => prev + 1);
+      console.log(`Server not ready yet, attempt ${healthCheckAttempts + 1}`);
+      return false;
+    }
+  };
+
+  // Initial health check and retry logic
+  useEffect(() => {
+    let healthCheckTimeout;
+
+    const startHealthCheck = async () => {
+      // Only run if server is not ready
+      if (serverReady) {
+        return;
+      }
+
+      const isReady = await performHealthCheck();
+
+      if (!isReady && !serverReady) {
+        // Retry every 2 seconds for the first 30 seconds, then every 5 seconds
+        const retryInterval = healthCheckAttempts < 15 ? 2000 : 5000;
+
+        healthCheckTimeout = setTimeout(() => {
+          startHealthCheck();
+        }, retryInterval);
+      }
+    };
+
+    // Only start health check if server is not ready
+    if (!serverReady) {
+      startHealthCheck();
+    }
+
+    return () => {
+      if (healthCheckTimeout) {
+        clearTimeout(healthCheckTimeout);
+      }
+    };
+  }, [serverReady]); // Remove healthCheckAttempts from dependencies
 
   // Function to refresh all data
   const refreshData = () => {
-    if (token) {
+    if (token && serverReady) {
       // Fetch connections
       connectionService
         .fetchConnections(token)
@@ -44,7 +96,7 @@ export const AppProvider = ({ children }) => {
     if (token) {
       refreshData();
     }
-  }, [token]);
+  }, [token, serverReady]);
 
   const handleAuth = async (endpoint, email, password) => {
     const authFunction =
@@ -202,6 +254,8 @@ export const AppProvider = ({ children }) => {
         refreshData,
         logout,
         toggleDarkMode,
+        serverReady,
+        healthCheckAttempts,
       }}
     >
       {children}

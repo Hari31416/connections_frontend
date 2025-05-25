@@ -4,6 +4,7 @@ import { AppProvider, useApp } from "./context/AppContext";
 import Auth from "./components/auth/Auth";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import ServerLoading from "./components/layout/ServerLoading";
 import ConnectionList from "./components/lists/ConnectionList";
 import CompanyList from "./components/lists/CompanyList";
 import PositionList from "./components/lists/PositionList";
@@ -15,7 +16,7 @@ import ConnectionDetails from "./components/pages/ConnectionDetails";
 import CompanyDetails from "./components/pages/CompanyDetails";
 
 const MainApp = () => {
-  const { darkMode, token } = useApp();
+  const { darkMode, token, serverReady, healthCheckAttempts } = useApp();
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [showCompanyModal, setShowCompanyModal] = useState(false);
   const [showPositionModal, setShowPositionModal] = useState(false);
@@ -64,6 +65,11 @@ const MainApp = () => {
   // If not logged in, show Auth component
   if (!token) {
     return <Auth />;
+  }
+
+  // Show loading screen if server is not ready
+  if (!serverReady) {
+    return <ServerLoading darkMode={darkMode} attempts={healthCheckAttempts} />;
   }
 
   // Connection Details View
