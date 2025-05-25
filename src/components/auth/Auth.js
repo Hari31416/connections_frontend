@@ -15,6 +15,8 @@ const Auth = () => {
   } = useApp();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   // Show loading screen if server is not ready
   if (!serverReady) {
@@ -23,6 +25,16 @@ const Auth = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Clear any previous password errors
+    setPasswordError("");
+
+    // For registration, check if passwords match
+    if (view === "register" && password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
     await handleAuth(
       view === "login" ? "/login" : "/register",
       email,
@@ -31,6 +43,13 @@ const Auth = () => {
     // Clear form fields on submission
     setEmail("");
     setPassword("");
+    setConfirmPassword("");
+  };
+
+  // Clear password error when switching between login/register
+  const handleViewChange = (newView) => {
+    setPasswordError("");
+    setView(newView);
   };
 
   return (
@@ -78,7 +97,7 @@ const Auth = () => {
               disabled={authLoading}
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label
               htmlFor="passwordInput"
               className="form-label visually-hidden"
@@ -99,6 +118,32 @@ const Auth = () => {
               disabled={authLoading}
             />
           </div>
+          {view === "register" && (
+            <div className="mb-3">
+              <label
+                htmlFor="confirmPasswordInput"
+                className="form-label visually-hidden"
+              >
+                Confirm Password
+              </label>
+              <input
+                id="confirmPasswordInput"
+                className={`form-control form-control-lg ${
+                  darkMode ? "bg-dark text-light border-secondary" : ""
+                } ${passwordError ? "border-danger" : ""}`}
+                placeholder="Confirm Password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                aria-label="Confirm Password"
+                required
+                disabled={authLoading}
+              />
+              {passwordError && (
+                <div className="text-danger mt-2 small">{passwordError}</div>
+              )}
+            </div>
+          )}
           <button
             type="submit"
             className="btn btn-primary btn-lg w-100 mb-3"
@@ -126,8 +171,8 @@ const Auth = () => {
             href="#"
             className="text-primary"
             onClick={(e) => {
-              e.preventDefault(); // Prevent default link behavior
-              setView(view === "login" ? "register" : "login");
+              e.preventDefault();
+              handleViewChange(view === "login" ? "register" : "login");
             }}
             style={{
               pointerEvents: authLoading ? "none" : "auto",
