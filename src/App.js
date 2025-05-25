@@ -16,6 +16,7 @@ import UserManagementModal from "./components/modals/UserManagementModal";
 import ModalBackdrop from "./components/modals/ModalBackdrop";
 import ConnectionDetails from "./components/pages/ConnectionDetails";
 import CompanyDetails from "./components/pages/CompanyDetails";
+import SearchComponent from "./components/search/SearchComponent";
 
 const MainApp = () => {
   const {
@@ -217,6 +218,16 @@ const MainApp = () => {
         <Header openUserManagementModal={openUserManagementModal} />
 
         <main className="flex-grow-1 d-flex flex-column">
+          {/* Search Component */}
+          <div className="row mb-4">
+            <div className="col-12">
+              <SearchComponent
+                onSelectConnection={viewConnection}
+                onSelectCompany={viewCompany}
+              />
+            </div>
+          </div>
+
           <div className="row mb-4">
             <ConnectionList
               openConnectionModal={openConnectionModal}

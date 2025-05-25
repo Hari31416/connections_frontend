@@ -69,3 +69,19 @@ export const getCompaniesByConnection = async (connectionId, token) => {
     return [];
   }
 };
+
+export const searchCompanies = async (query, token) => {
+  try {
+    if (!query || query.trim().length === 0) {
+      return [];
+    }
+    return await fetchWithAuth(
+      `/companies/search/${encodeURIComponent(query)}`,
+      {},
+      token
+    );
+  } catch (error) {
+    console.error("Error searching companies:", error);
+    return [];
+  }
+};

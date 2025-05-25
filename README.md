@@ -83,6 +83,15 @@ A modern React application for managing professional and personal connections, c
 - **Job Details**: Position titles, employment periods, and role-specific notes
 - **Career Timeline**: Visualize professional relationships over time
 
+### 🔍 Search & Discovery
+
+- **Real-time Search**: Instant search across connections and companies with debounced input
+- **Multi-field Search**: Search connections by name, email, phone, LinkedIn/GitHub usernames, and notes
+- **Company Search**: Find companies by name, industry, and website
+- **Search Filtering**: Filter results by type (All, Connections Only, Companies Only)
+- **Interactive Results**: Click search results to navigate directly to detailed views
+- **Smart Matching**: Case-insensitive partial matching for flexible search queries
+
 ### 🎨 User Interface
 
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices

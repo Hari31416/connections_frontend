@@ -59,3 +59,19 @@ export const getConnectionDetails = async (connectionId, token) => {
     return null;
   }
 };
+
+export const searchConnections = async (query, token) => {
+  try {
+    if (!query || query.trim().length === 0) {
+      return [];
+    }
+    return await fetchWithAuth(
+      `/connections/search/${encodeURIComponent(query)}`,
+      {},
+      token
+    );
+  } catch (error) {
+    console.error("Error searching connections:", error);
+    return [];
+  }
+};
