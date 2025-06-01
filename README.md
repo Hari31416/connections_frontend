@@ -2,6 +2,17 @@
 
 A modern React application for managing professional and personal connections, companies, and employment positions. Features a responsive design, dark/light mode toggle, and intuitive user interface built with Bootstrap.
 
+## ⚠️ Experimental Project Disclaimer
+
+**This is an experimental project** - the result of an experiment to understand whether "vibe coding" can be used to generate end-to-end web applications.
+
+**Important Notes:**
+
+- The bulk of this code is AI-generated
+- This code is **NOT optimized for production use**
+- This project serves as a proof-of-concept and learning exercise
+- Use at your own risk and review thoroughly before any production deployment
+
 ## 🚀 Technology Stack
 
 - **Framework**: React (v19.1.0)
